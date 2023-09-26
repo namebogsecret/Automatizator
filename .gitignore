@@ -1,0 +1,14 @@
+geckodriver
+chromedriver
+/logs/*
+/venv/*
+.gitignore
+api.py
+strings.txt
+.env
+*.pyc
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.gitattributes
