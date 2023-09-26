@@ -13,7 +13,7 @@ from logging import getLogger
 from log_scripts.set_logger import set_logger
 
 ##from selenium import webdriver
-from selenium.webdriver import Chrome, ChromeOptions, Firefox, FirefoxOptions, Safari, Options
+from selenium.webdriver import Chrome, ChromeOptions, Firefox, FirefoxOptions, Safari, SafariOptions
 from capcha.take_screenshot import take_screenshot
 from selenium.webdriver.chrome.service import Service
 import json
@@ -60,7 +60,7 @@ def prepare_page(scrolldown: int = 5):
         driver = Chrome(options=options)
     elif my_driver == "safari":
         # Задаем уникальный идентификатор окна Safari
-        options = Options()
+        options = SafariOptions()
         #options.set_capability('safari.initialUrl', 'profi_fucker')
         options = set_option(options)
         driver = Safari(options=options)
