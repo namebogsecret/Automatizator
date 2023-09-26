@@ -1,6 +1,6 @@
 {
     "dict_otklik": {
-        "have_card": ["hpkVCI", "css"],
+        "have_card": ["order-card-content__container", "fullcss"],
         "chat_page": ["eqqSjY", "css"],
         "otklik_chouse_button": ["fdEiIF", "css"],
         "otklik_button": ["eHeSBb", "css"],
