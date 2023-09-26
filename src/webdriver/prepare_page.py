@@ -38,16 +38,16 @@ def prepare_page(scrolldown: int = 5):
     my_driver = strings_dict["driver"]
     logger.info("Инициализация драйвера Selenium, используя браузер Safari")
     if my_driver == "chrome":
-        options = ChromeOptions()
+        """options = ChromeOptions()
         options = set_option(options)
         #chrome_driver_path = "/usr/local/bin/chromedriver"
         #chrome_options.binary_location =
         # "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
         #chrome_driver_path = "/Volumes/Untitled/Automatizator/chromedriver"
-        """chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--headless")
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--no-sandbox")
-        chrome_options.add_argument("--disable-dev-shm-usage")"""
+        chrome_options.add_argument("--disable-dev-shm-usage")
         #options = ChromeOptions()
         #options.add_argument("--headless")
         #chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
@@ -57,7 +57,22 @@ def prepare_page(scrolldown: int = 5):
         #driver = Chrome(executable_path=chrome_driver_path, options=chrome_options)
 
         #driver = Chrome()#Safari() /usr/local/bin/chromedriver
-        driver = Chrome(options=options)
+        driver = Chrome(options=options)"""
+
+        chrome_options = ChromeOptions()
+
+        #chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
+        #chrome_options.binary_location = "/Volumes/Cache/ProgramFiles/Google Chrome.app/Contents/MacOS/Google Chrome"
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        #chrome_driver_path = "/usr/local/bin/chromedriver"
+        chrome_options.binary_location = "/usr/bin/google-chrome"
+
+        chrome_driver_path = "/usr/local/bin/chromedriver"
+        logger.info("Инициализация драйвера Selenium, используя браузер Chrome")
+        driver = Chrome(options=chrome_options)
     elif my_driver == "safari":
         # Задаем уникальный идентификатор окна Safari
         options = SafariOptions()
