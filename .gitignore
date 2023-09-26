@@ -22,6 +22,7 @@ chromedriver
 ._src_
 cookies_.txt
 /files_/*
+repetitors.db
 
 src/main_nocapcha
 src/configuration/dictionaries_old copy 2.json
