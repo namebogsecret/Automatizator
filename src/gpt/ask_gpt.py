@@ -7,8 +7,11 @@ class GPTSoonEndedError(Exception):
         super().__init__(self.message)
 
 def write_answer_to_file(start_time, text, temp, rus_time, id, sql):
-    with open(f'answers/answer_{id}_{start_time}.txt', 'w') as f:
-        f.write(f"Время запроса: {rus_time:.1f}c. temp = {temp}.\n {text}")
+    """answers_dir = 'answers'
+    if not exists(answers_dir):
+        makedirs(answers_dir)
+    with open(f'{answers_dir}/answer_{id}_{start_time}.txt', 'w') as f:
+        f.write(f"Время запроса: {rus_time:.1f}c. temp = {temp}.\n {text}")"""
     add_message(sql, id, text, start_time, rus_time, temp)
 
 def save_to_sql(sql,id,text, time_long):

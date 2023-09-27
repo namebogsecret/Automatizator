@@ -230,7 +230,10 @@ def load_card_html(url, driver, sql) -> tuple:
                     logger.info("Не получилось отправить доп инфо %s", id)
                 else:
                     start_time = time.time()
-                    with open(f'answers/dop_info_{id}_{start_time}.txt', 'w') as f:
+                    answers_dir = 'answers'
+                    if not exists(answers_dir):
+                        makedirs(answers_dir)
+                    with open(f'{answers_dir}/dop_info_{id}_{start_time}.txt', 'w') as f:
                         f.write(message)
                     add_message(sql, id, message, start_time, None, None)
             else:

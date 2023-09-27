@@ -2,12 +2,12 @@
 *.html
 *.log
 *.zip
-/.vscode/*
-/logs/*
-/src_/*
-/venv/*
+.vscode/*
+logs/*
+src_/*
+venv/*
 */__pycache__/*
-/src/build/*
+src/build/*
 *.pyc
 src/.DS_Store
 main
@@ -31,3 +31,4 @@ src/main.py.save
 src/capcha/.env
 src/configuration/api.txt
 src/configuration/strings.txt
+answers/*
