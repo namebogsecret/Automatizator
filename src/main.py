@@ -10,7 +10,7 @@ sys.path.append(src_path)"""
 from configuration.read_strings_from_file import read_strings_from_file
 
 from sys import exit as sys_exit
-from datetime import datetime #timedelta, 
+from datetime import datetime, timedelta
 from random import randint
 from threading import Thread
 #import AppKit as appkit
@@ -51,13 +51,13 @@ from stata.get_ostalos import get_ostalos
 
 logger = getLogger(__name__)
 logger = set_logger(logger)
-
+last_time_otklik = time()
 read_dictionaries_from_file('src/configuration/dictionaries_old.json')
 strings_dict = read_strings_from_file()
 cards_at_a_time = int(strings_dict["cards_at_a_time"])
 scrolls = int(strings_dict["scrolls"])
 url2 = strings_dict["second_url"]
-    
+
 form_width = 225
 form_height = 345
 start_time = datetime.now()
@@ -69,8 +69,11 @@ logger.info("Запуск программы в %s", start_time)
 
 #@profile
 def timer():
+    bots3 = TelegramBots(3)
     sleep(30)
+    times = 0
     while not flag.stop:
+        times += 1
         sleep(10)
         time_passed = datetime.now() - start_time
         #logger.info("Прошло %s секунд с момента запуска программы",
@@ -78,9 +81,27 @@ def timer():
         #app.time_from_start["text"] = str(strftime( "%H:%M:%S",
         # gmtime(time_passed.seconds)))
 
+        if times >= 6:
+            try:
+                # Вычисляем разницу во времени
+                time_from_otklik = time() - last_time_otklik
+                time_delta = timedelta(seconds=time_from_otklik)
+                formatted_time = str(time_delta).split('.')[0]
+                bots3.to_developer(f"С обновления прошло: {formatted_time}")
+                logger.info(f"С обновления прошло: {formatted_time}")
+                if time_from_otklik > 60 * 10: #10 минут
+                    logger.error(f"Слишком долго не обновлялись карточки {formatted_time}")
+                    bots3.rassilka(f"Слишком долго не обновлялись карточки  {formatted_time}, возможно требуется внимание")
+                del time_from_otklik, formatted_time, time_delta
+                times = 0
+            except Exception as e:
+                logger.error(e)
+                logger.error("Не удалось отправить сообщение в телеграмм")
+                times = 0
         del time_passed
 #@profile
 def main_loop():
+    global last_time_otklik
     bots1 = TelegramBots(1)
     bots2 = TelegramBots(2)
     bots1.to_all_mine("Запустился бот %s" % start_time.strftime("%d.%m.%Y %H:%M:%S"),
@@ -108,6 +129,8 @@ def main_loop():
     is_it_critical = 0
     global dicts
     ostalos_otklikov = 50
+
+    
     try:
         if 0 <= datetime.now().minute <= 5:
             ostalos = get_ostalos(driver)
@@ -177,8 +200,8 @@ def main_loop():
                             ostalos_otklikov = ostalos
                 except Exception as e:
                     logger.error(f"Ошибка получения осталось: {e}")
-
                 bots2.to_developer(f"""Цикл: {str(ciklov)} \nОткликов: {str(otklikov)} \nВакансий: {str(vakansiy)} \nУдаленных: {str(deleted)} \nОшибок: {str(errors)}  \nНеподходящих: {str(nepodhodit)} \nЗабаненных: {str(banned)} \nЛимитов: {str(limited)} \nВремя: {str(datetime.now().strftime('%H:%M:%S'))}\nОсталось: {str(ostalos_otklikov)}""")
+                last_time_otklik = time()
             else:
                 logger.error("Нет новых карточек none ")
                 some_errors += 1

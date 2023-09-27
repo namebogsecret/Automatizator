@@ -4,14 +4,17 @@ from telegram import Bot
 from configuration.read_strings_from_file import read_strings_from_file
 
 class TelegramBot:
-    def __init__(self, chat_id, numer_of_bot: int = 1):#, token1: str = '6146861942:AAG2_2aaHSZG3p1SyX1C77OrdRZsD6y0frU', token2 = "5600318053:AAFKhNIcFNTr35URWLkArWMAlAx5DH8r1VA"):
+    def __init__(self, chat_id, numer_of_bot: int = 1):
         strings_dict = read_strings_from_file()
         t_api1 = strings_dict['t_api1']
         t_api2 = strings_dict['t_api2']
+        t_api3 = strings_dict['t_api3']
         if numer_of_bot == 1:
             self.token = t_api1
-        else:
+        elif numer_of_bot == 2:
             self.token = t_api2
+        else:
+            self.token = t_api3
         self.chat_id = chat_id
 
     async def send_message_sync(self, message: str, del_then = True):
