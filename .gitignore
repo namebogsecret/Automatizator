@@ -35,3 +35,7 @@ answers/*
 dump.sql
 *.db
 sqlite3_analyzer
+venv
+files_
+.vscode
+answers
