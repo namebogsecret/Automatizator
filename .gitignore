@@ -32,3 +32,6 @@ src/capcha/.env
 src/configuration/api.txt
 src/configuration/strings.txt
 answers/*
+*.db
+*.sql
+sqlite3_analyzer
