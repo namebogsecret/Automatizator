@@ -65,7 +65,8 @@ logger.info("Запуск программы в %s", start_time)
 #cards_at_a_time = 20
 #scrolls = 2
 
-
+poluchat_li_ostalos = int(strings_dict["poluchat_li_ostalos"])
+time_for_otklik = int(strings_dict["time_for_otklik"])
 
 #@profile
 def timer():
@@ -111,7 +112,7 @@ def main_loop():
     bots1.to_all_mine("Запустился бот %s" % start_time.strftime("%d.%m.%Y %H:%M:%S"),
                       False)
 
-    sleep(5)
+    sleep(30+randint(-10, 10))
     logger.info("Запуск главного цикла")
     #app.state_label["text"] = "State: Preparing page..."
     driver, x_coordinata = prepare_page(scrolls)
@@ -134,17 +135,18 @@ def main_loop():
     global dicts
     ostalos_otklikov = 50
 
-    
-    try:
-        if 0 <= datetime.now().minute <= 5:
-            ostalos = get_ostalos(driver)
-            sleep(10)
-            if not ostalos:
-                logger.error("Не удалось получить осталось")
-            else:
-                ostalos_otklikov = ostalos
-    except Exception as e:
-        logger.error(f"Ошибка получения осталось: {e}")
+    if poluchat_li_ostalos == 1:
+        try:
+
+            if 0 <= datetime.now().minute <= 5:
+                ostalos = get_ostalos(driver)
+                sleep(20+randint(-5, 5))
+                if not ostalos:
+                    logger.error("Не удалось получить осталось")
+                else:
+                    ostalos_otklikov = ostalos
+        except Exception as e:
+            logger.error(f"Ошибка получения осталось: {e}")
     while not flag.stop:
         timer_start = time()
         archive_old_logs(logs_dir)
@@ -193,17 +195,19 @@ def main_loop():
                 app.banned_number["text"] = str(banned)
                 app.limited_number["text"] = str(limited)"""
 
-                #если сейчас время от 0 до 5 минут каждый час, то отправляем статистику
-                try:
-                    if 0 <= datetime.now().minute <= 5:
-                        ostalos = get_ostalos(driver)
-                        sleep(10)
-                        if not ostalos:
-                            logger.error("Не удалось получить осталось")
-                        else:
-                            ostalos_otklikov = ostalos
-                except Exception as e:
-                    logger.error(f"Ошибка получения осталось: {e}")
+                if poluchat_li_ostalos == 1:
+                    #если сейчас время от 0 до 5 минут каждый час, то отправляем статистику
+                    try:
+                        if 0 <= datetime.now().minute <= 5:
+                            ostalos = get_ostalos(driver)
+                            sleep(10)
+                            if not ostalos:
+                                logger.error("Не удалось получить осталось")
+                            else:
+                                ostalos_otklikov = ostalos
+                    except Exception as e:
+                        logger.error(f"Ошибка получения осталось: {e}")
+                
                 bots2.to_developer(f"""Цикл: {str(ciklov)} \nОткликов: {str(otklikov)} \nВакансий: {str(vakansiy)} \nУдаленных: {str(deleted)} \nОшибок: {str(errors)}  \nНеподходящих: {str(nepodhodit)} \nЗабаненных: {str(banned)} \nЛимитов: {str(limited)} \nВремя: {str(datetime.now().strftime('%H:%M:%S'))}\nОсталось: {str(ostalos_otklikov)}""")
                 last_time_otklik = time()
             else:
@@ -222,7 +226,7 @@ def main_loop():
             bots1.rassilka("""Больше 5 ошибок, возможно требуется внимание""")
             some_errors = 0
             is_it_critical += 1
-            if is_it_critical > 2:
+            if is_it_critical > 5:
                 logger.error("Слишком много критических ошибок")
                 bots1.rassilka("""3 критических ошибки, пробуем перезапустить бота""")
                 # Завершение программы
@@ -232,12 +236,12 @@ def main_loop():
         timer_stop = time()
         #driver.save_screenshot(f"screenshot_{timer_stop}.png")
         proshlo_vremeni = timer_stop - timer_start
-        if not flag.stop and delta > 0 and delta_otkl == 0 and proshlo_vremeni < 50:
+        if not flag.stop and delta > 0 and delta_otkl == 0 and proshlo_vremeni < time_for_otklik:
             try:
                 driver.get(url2)
                 
                 #app.state_label["text"] = "State: Main page opening..."
-                sleep(10 + randint(-2, 2))
+                sleep(60 + randint(-20, 20))
                 cardupdater = CardUpdater(driver,sql )
                 cardupdater.update_all_cards()
                 ws = WebScraper(driver, "dict_otklik")
@@ -261,24 +265,24 @@ def main_loop():
         # обновляем значение числа на метке
         sql.close()
         #app.loops_number["text"] = str(ciklov)
-        time_to_sleep = 80 + randint(-10, 10)
+        time_to_sleep = time_for_otklik + randint(-30, 30)
         #time_of_continue = datetime.now() + timedelta(seconds=time_to_sleep)
         #app.state_label["text"] = "State: will continue in "
         # + str(time_of_continue.strftime("%H:%M:%S")) + " seconds"
-        random_time = randint(0, 30)
+        random_time = randint(0, 120)
         for cikl_time in range(time_to_sleep):
             second_timer_stop = time()
             proshlo_vremeni = second_timer_stop - timer_start
-            if flag.stop or flag.update_now or proshlo_vremeni > 60 + random_time:
+            if flag.stop or flag.update_now or proshlo_vremeni > time_for_otklik + random_time:
                 break
-            sleep(1)
+            sleep(2+randint(-1, 1))
         
         pause_counter = 0
         while flag.pause and not flag.update_now:
             
             pause_counter += 1
             #app.state_label["text"] = "State: Paused for {pause_counter} seconds"
-            sleep(1)
+            sleep(2 + randint(-1, 1))
         #app.state_label["text"] = "State: Trying to open main page."
         collect()
         if not flag.stop:
@@ -287,7 +291,7 @@ def main_loop():
                 driver.get(url2)
                 
                 #app.state_label["text"] = "State: Main page opening..."
-                sleep(10 + randint(-2, 2))
+                sleep(20 + randint(-3, 3))
                 scroll_down(driver, 2)
                 ws = WebScraper(driver, "dict_otklik")
                 new_messages = ws.is_it_on_the_page("new_messages")
@@ -302,7 +306,7 @@ def main_loop():
                 else:
                     #app.state_label["text"] = "State: No new messages"
                     logger.info("No new messages")
-                sleep(1)
+                sleep(2 + randint(-1, 1))
             except Exception as e:
                 logger.error(e)
                 logger.error("Не удалось перейти на страницу https://repetitors.info/backoffice/n.php")
