@@ -90,10 +90,10 @@ def timer():
                 formatted_time = str(time_delta).split('.')[0]
                 bots3.to_developer(f"С обновления прошло: {formatted_time}")
                 logger.info(f"С обновления прошло: {formatted_time}")
-                if time_from_otklik > 60 * 10: #10 минут
+                if time_from_otklik > time_for_otklik * 3: #10 минут
                     logger.error(f"Слишком долго не обновлялись карточки {formatted_time}")
                     bots3.rassilka(f"Слишком долго не обновлялись карточки  {formatted_time}, возможно требуется внимание", False)
-                    if time_from_otklik > 60 * 15: # 
+                    if time_from_otklik > time_for_otklik * 5: # 
                         logger.error(f"Слишком долго не обновлялись карточки {formatted_time} - Перезапуск")
                         bots3.rassilka(f"Слишком долго не обновлялись карточки  {formatted_time} - Перезапуск", False)
                         sys_exit("Error: too long not updating, trying to restart the bot")
