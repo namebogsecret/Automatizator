@@ -55,6 +55,7 @@
         "posted": ["eltEAX",  "css"] 
     },
     "dict_chat_status": {
+        "chat_element": ["INITIAL", "type"],
         "read": ["cNIvoI kHoMn #0075ff", "css"],
         "unread": ["cNIvoI kHoMn #7e8287", "css"],
         "ongoing_chat": ["cNIvoI kHoMn #0075ff transform: scale(0)", "css"],

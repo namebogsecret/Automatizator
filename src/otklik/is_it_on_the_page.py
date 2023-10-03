@@ -47,6 +47,9 @@ class WebScraper:
             elif by == 'id':  # Add support for searching by id
                 method = By.ID
                 selector = value
+            elif by == 'type':
+                method = By.CSS_SELECTOR
+                selector = f"[type='{value}']"
             else:
                 raise ValueError(f'Некорректное значение аргумента by: {by}')
         
