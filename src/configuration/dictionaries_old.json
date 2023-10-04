@@ -57,6 +57,8 @@
     "dict_chat_status": {
         "chat_element": ["INITIAL", "type"],
         "top_string": ["span", "tag"],
+        "svg": ["svg", "tag"],
+        "path": ["path", "tag"],
         "galki": ["bjEybf", "css"],
         "read": ["cNIvoI kHoMn #0075ff", "css"],
         "unread": ["cNIvoI kHoMn #7e8287", "css"],
