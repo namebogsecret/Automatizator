@@ -158,6 +158,11 @@ def set_logger_(logger, logs_dir):
     
     return logger
 
+def make_dir_if_not_exist(path_to_dir):
+    logs_dir = path_to_dir
+    if not exists(logs_dir):
+        makedirs(logs_dir)
+
 def set_logger(logger):
     component_name = logger.name
     logger.setLevel(logging.DEBUG)
@@ -176,41 +181,46 @@ def set_logger(logger):
     # Добавление обработчика к логгеру
     #logger.addHandler(console_handler)
 
-    
+    make_dir_if_not_exist(join(logs_dir,'all'))
     # Общий файл лога
     file_handler_all = logging.FileHandler(join(logs_dir,'all', f'{datetime.now().strftime("%Y-%m-%d")}_app_all.log'))
     file_handler_all.setFormatter(formatter)
     logger.addHandler(file_handler_all)
 
+    make_dir_if_not_exist(join(logs_dir,'debug'))
     # Файлы лога по уровням сообщений
     debug_handler = logging.FileHandler(join(logs_dir, 'debug', f'{datetime.now().strftime("%Y-%m-%d")}_debug.log'))
     debug_handler.setLevel(logging.DEBUG)
     debug_handler.setFormatter(formatter)
     logger.addHandler(debug_handler)
 
+    make_dir_if_not_exist(join(logs_dir,'info'))
     info_handler = logging.FileHandler(join(logs_dir, 'info', f'{datetime.now().strftime("%Y-%m-%d")}_info.log'))
     info_handler.setLevel(logging.INFO)
     info_handler.setFormatter(formatter)
     logger.addHandler(info_handler)
 
+    make_dir_if_not_exist(join(logs_dir,'warning'))
     warning_handler = logging.FileHandler(join(logs_dir, 'warning', f'{datetime.now().strftime("%Y-%m-%d")}_warning.log'))
     warning_handler.setLevel(logging.WARNING)
     warning_handler.setFormatter(formatter)
     logger.addHandler(warning_handler)
 
+    make_dir_if_not_exist(join(logs_dir,'error'))
     error_handler = logging.FileHandler(join(logs_dir, 'error', f'{datetime.now().strftime("%Y-%m-%d")}_error.log'))
     error_handler.setLevel(logging.ERROR)
     error_handler.setFormatter(formatter)
     logger.addHandler(error_handler)
 
+    make_dir_if_not_exist(join(logs_dir,'critical'))
     critical_handler = logging.FileHandler(join(logs_dir, 'critical', f'{datetime.now().strftime("%Y-%m-%d")}_critical.log'))
     critical_handler.setLevel(logging.CRITICAL)
     critical_handler.setFormatter(formatter)
     logger.addHandler(critical_handler)
 
     log_components_dir = join(logs_dir, 'components', component_name)
-    if not exists(log_components_dir):
-        mkdir(log_components_dir)
+    make_dir_if_not_exist(join(logs_dir,'components'))
+    make_dir_if_not_exist(log_components_dir )
     # Файлы лога для каждого компонента
     file_handler_component = logging.FileHandler(join(log_components_dir, f'{datetime.now().strftime("%Y-%m-%d")}_{component_name}_all.log'))
     file_handler_component.setFormatter(formatter)
