@@ -30,6 +30,8 @@ def set_option(options):
     return options
 
 def prepare_page(scrolldown: int = 5):
+    global CAPTCHA_IS_SOLVED
+    CAPTCHA_IS_SOLVED = False
     strings_dict = read_strings_from_file()
     url2 = strings_dict["second_url"]
     base_url = strings_dict["second_base_url"]
@@ -178,4 +180,5 @@ def prepare_page(scrolldown: int = 5):
     # Прокрутка страницы 35 раз
     scroll_down(driver, scrolldown)
     logger.info("Страница готова к парсингу")
+    CAPTCHA_IS_SOLVED = True
     return driver, 1440 + height/2
