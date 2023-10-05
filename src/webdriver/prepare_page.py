@@ -107,9 +107,13 @@ def prepare_page(scrolldown: int = 5):
             with open('cookies.txt', 'r') as file:
                 content = file.read()
                 if content:  # Проверяем, не пустой ли файл
-                    cookies = json.loads(content)
-                    for cookie in cookies:
-                        driver.add_cookie(cookie)
+                    try:
+                        cookies = json.loads(content)
+                        for cookie in cookies:
+                            driver.add_cookie(cookie)
+                        logger.info("Cookies загружены")
+                    except Exception as e:
+                        logger.warning(f"Ошибка при загрузке cookies: {e}")
                 else:
                     logger.info("Cookies file is empty!")
         driver.get(url2)
