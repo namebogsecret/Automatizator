@@ -241,7 +241,7 @@ def main_loop():
         if not flag.stop and delta > 0 and delta_otkl == 0 and proshlo_vremeni < time_for_otklik:
             try:
                 driver.get(url2)
-                
+                scroll_down(driver, scrolls)
                 #app.state_label["text"] = "State: Main page opening..."
                 sleep(60 + randint(-20, 20))
                 cardupdater = CardUpdater(driver,sql )
@@ -291,7 +291,7 @@ def main_loop():
         
             try:
                 driver.get(url2)
-                
+                scroll_down(driver, scrolls)
                 #app.state_label["text"] = "State: Main page opening..."
                 sleep(20 + randint(-3, 3))
                 scroll_down(driver, 2)
