@@ -11,25 +11,29 @@ logger = getLogger(__name__)
 logger = set_logger(logger)
 
 def take_screenshot(element, name = 'screenshot'):
-    logger.info(" Скриншот капчи")
+    try:
+        logger.info(" Скриншот капчи")
 
-    #location = element.location
-    #size = element.size
-    #png = driver.get_screenshot_as_png() # делаем скриншот всей страницы
-    if isinstance(element, WebDriver):
-        png = element.get_screenshot_as_png()
-    elif isinstance(element, WebElement):
-        png = element.screenshot_as_png
-    else:
-        raise TypeError(f"Unsupported element type: {type(element)}")
-    #print (png2)
-    #print (png)
-    logger.info(" Скриншот капчи получен")
-    adress = f'{name}.png'
-    im = Image.open(BytesIO(png)) 
-    logger.info(" Скриншот капчи открыт")
-    im.save(adress)
-    logger.info(" Скриншот капчи сохранен")
+        #location = element.location
+        #size = element.size
+        #png = driver.get_screenshot_as_png() # делаем скриншот всей страницы
+        if isinstance(element, WebDriver):
+            png = element.get_screenshot_as_png()
+        elif isinstance(element, WebElement):
+            png = element.screenshot_as_png
+        else:
+            raise TypeError(f"Unsupported element type: {type(element)}")
+        #print (png2)
+        #print (png)
+        logger.info(" Скриншот капчи получен")
+        adress = f'{name}.png'
+        im = Image.open(BytesIO(png)) 
+        logger.info(" Скриншот капчи открыт")
+        im.save(adress)
+        logger.info(" Скриншот капчи сохранен")
+    except Exception as e:
+        logger.error(f" Ошибка при получении скриншота капчи: {e}")
+        adress = None
     return adress
     #im = Image.open(BytesIO(png2))
     #im.save('screenshot2.png')
