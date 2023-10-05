@@ -68,8 +68,10 @@ logger.info("Запуск программы в %s", start_time)
 poluchat_li_ostalos = int(strings_dict["poluchat_li_ostalos"])
 time_for_otklik = int(strings_dict["time_for_otklik"])
 
+CAPTCHA_IS_SOLVED = False
 #@profile
 def timer():
+    global CAPTCHA_IS_SOLVED
     bots3 = TelegramBots(3)
     sleep(30)
     times = 0
@@ -82,7 +84,7 @@ def timer():
         #app.time_from_start["text"] = str(strftime( "%H:%M:%S",
         # gmtime(time_passed.seconds)))
 
-        if times >= 6:
+        if times >= 6 and CAPTCHA_IS_SOLVED == True:
             try:
                 # Вычисляем разницу во времени
                 time_from_otklik = time() - last_time_otklik
