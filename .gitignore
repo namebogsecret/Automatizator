@@ -39,8 +39,10 @@ venv
 files_
 .vscode
 answers
-cookies.txt
 cookies_.txt
-cookies.txt
 logs
 files
+.env
+api.txt
+api.py
+api
