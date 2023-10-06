@@ -6,9 +6,9 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from logging import getLogger
 from typing import Dict, List, Union
-from log_scripts.set_logger import set_logger
+from src.log_scripts.set_logger import set_logger
 #from constants.dict import dict_otklik
-from constants.dicts_def import dicts
+from src.constants.dicts_def import dicts
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC

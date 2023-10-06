@@ -1,5 +1,5 @@
-from otklik.is_it_on_the_page import WebScraper
-from log_scripts.set_logger import set_logger
+from src.otklik.is_it_on_the_page import WebScraper
+from src.log_scripts.set_logger import set_logger
 from logging import getLogger
 
 from selenium.webdriver.common.keys import Keys

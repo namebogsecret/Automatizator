@@ -1,19 +1,19 @@
 from logging import getLogger
-from otklik.click import click
-from sound.pik import pik
-from log_scripts.set_logger import set_logger
+from src.otklik.click import click
+from src.sound.pik import pik
+from src.log_scripts.set_logger import set_logger
 #from otklik.click import click
 from time import sleep
-from otklik.chouse_avtootklik_text import chouse_avtootklik_text
+from src.otklik.chouse_avtootklik_text import chouse_avtootklik_text
 from random import random , randint
 #from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver import Safari
-from otklik.is_it_on_the_page import WebScraper
+from src.otklik.is_it_on_the_page import WebScraper
 #from webdriver.scroll import scroll_down
 #from constants.dict import dict_otklik
-from gpt.gpt import gpt
+from src.gpt.gpt import gpt
 #from constants.texts import answer1
 #from configuration.read_strings_from_file import read_strings_from_file
 #from pyperclip import copy, paste

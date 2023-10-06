@@ -2,7 +2,7 @@
 #import webelement
 from selenium.webdriver.remote.webdriver import WebDriver as webdriver
 from logging import getLogger
-from log_scripts.set_logger import set_logger
+from src.log_scripts.set_logger import set_logger
 from time import sleep
 #from selenium.webdriver.common.action_chains import ActionChains
 from random import shuffle, uniform, random

@@ -7,8 +7,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from logging import getLogger
-from capcha.take_screenshot import take_screenshot
-from log_scripts.set_logger import set_logger
+from src.capcha.take_screenshot import take_screenshot
+from src.log_scripts.set_logger import set_logger
 
 # logger setup
 logger = getLogger(__name__)

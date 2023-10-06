@@ -5,19 +5,19 @@ if getattr(sys, 'frozen', False):
 else:
     src_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(src_path)"""
-from configuration.read_strings_from_file import read_strings_from_file
-from gpt.ask_gpt import ask_gpt
+from src.configuration.read_strings_from_file import read_strings_from_file
+from src.gpt.ask_gpt import ask_gpt
 #from requests import get, post
 #from json import dumps, loads
 #from time import time
-from gpt.gptclient import GPTClient
+from src.gpt.gptclient import GPTClient
 #from constants.api import api_key as api_old
-from gpt.get_request import get_request, get_request1, get_request2
-from configuration.get_api import get_api
+from src.gpt.get_request import get_request, get_request1, get_request2
+from src.configuration.get_api import get_api
 from random import randint
 from time import time
 
-from gpt.ask_gpt import write_answer_to_file
+from src.gpt.ask_gpt import write_answer_to_file
 
 def gpt(html_about:str, id: str, all_text_to_gpt_with_numbers:str, witch:int = 1, gpt4: bool = True,  temp: float = 2/10, timeout=240, sql = None):
     temp = randint(1,9)/10
@@ -59,5 +59,5 @@ def gpt(html_about:str, id: str, all_text_to_gpt_with_numbers:str, witch:int = 1
 if __name__ == "__main__":
     
     html_about = 'математикаот 2800\xa0руб./чописаниеповышение успеваемостиученикандрей, 5 класс.адреспоказать картупроспект мира, 122алексеевскаяклиент может приехатьалексеевскаядетали заказа№ 55205075заказ оставлен 1 минуту назадуточнить деталиеекатерина сейчас в сетина профис 27 июля 2021подтвердиланомеротзывов от специалистов пока нетв этом заказе ваш отклик будет 1-м по рейтингу.'
-    print (gpt(html_about, gpt4 = True, temp = 1))
+    #print (gpt(html_about, gpt4 = True, temp = 1))
     

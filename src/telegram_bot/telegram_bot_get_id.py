@@ -22,7 +22,7 @@ from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandl
 
 from telegram import __version__ as TG_VER
 import ast
-from configuration.read_strings_from_file import read_strings_from_file
+from src.configuration.read_strings_from_file import read_strings_from_file
 
 strings_dict = read_strings_from_file()
 DEVELOPER_CHAT_ID = strings_dict['DEVELOPER_CHAT_ID']

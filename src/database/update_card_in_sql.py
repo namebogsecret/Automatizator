@@ -2,14 +2,14 @@
 debug = True
 # create_db.py
 from logging import getLogger
-from parsing_card.pars_prices import parse_prices
-from database.price_database import PricesDatabase
-from constants.pathes import db_path
+from src.parsing_card.pars_prices import parse_prices
+from src.database.price_database import PricesDatabase
+from src.constants.pathes import db_path
 from sqlite3 import Error
 if debug:
-    from database.login_to_sql_server import login_to_sql_server
-from time_pars.get_real_datetime import get_real_datetime
-from log_scripts.set_logger import set_logger
+    from src.database.login_to_sql_server import login_to_sql_server
+from src.time_pars.get_real_datetime import get_real_datetime
+from src.log_scripts.set_logger import set_logger
 # logger setup
 logger = getLogger(__name__)
 logger = set_logger(logger)

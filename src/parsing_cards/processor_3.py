@@ -1,12 +1,12 @@
-from parsing_cards.get_anything import href_from_relative_url
-from images.img_process import get_img_url
+from src.parsing_cards.get_anything import href_from_relative_url
+from src.images.img_process import get_img_url
 from logging import getLogger
-from log_scripts.set_logger import set_logger
+from src.log_scripts.set_logger import set_logger
 from selenium.webdriver.common.by import By
-from otklik.is_it_on_the_page import WebScraper
-from images.save_img import save_img
+from src.otklik.is_it_on_the_page import WebScraper
+from src.images.save_img import save_img
 #import configuration.dictionaries_old.json
-from configuration.read_dictionaries_from_file import read_dictionaries_from_file
+from src.configuration.read_dictionaries_from_file import read_dictionaries_from_file
 from selenium.webdriver.remote.webelement import WebElement
 import re
 logger = getLogger(__name__)

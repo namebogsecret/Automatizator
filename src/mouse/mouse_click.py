@@ -2,7 +2,7 @@
 from time import sleep
 #import Quartz.CoreGraphics as CG
 from logging import getLogger
-from log_scripts.set_logger import set_logger
+from src.log_scripts.set_logger import set_logger
 
 # logger setup
 logger = getLogger(__name__)

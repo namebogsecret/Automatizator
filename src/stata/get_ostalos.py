@@ -1,8 +1,8 @@
-from otklik.get_page import get_page
-from otklik.is_it_on_the_page import WebScraper
+from src.otklik.get_page import get_page
+from src.otklik.is_it_on_the_page import WebScraper
 from logging import getLogger
-from log_scripts.set_logger import set_logger
-from stata.ostalos_number_from_text import extract_number_before_today
+from src.log_scripts.set_logger import set_logger
+from src.stata.ostalos_number_from_text import extract_number_before_today
 
 logger = getLogger(__name__)
 logger = set_logger(logger)

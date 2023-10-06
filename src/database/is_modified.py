@@ -1,8 +1,8 @@
 # /src/database/is_modified.py
 from datetime import timedelta, datetime
 from logging import getLogger
-from time_pars.get_real_datetime import get_real_datetime
-from log_scripts.set_logger import set_logger
+from src.time_pars.get_real_datetime import get_real_datetime
+from src.log_scripts.set_logger import set_logger
 # logger setup
 logger = getLogger(__name__)
 logger = set_logger(logger)

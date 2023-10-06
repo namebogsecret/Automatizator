@@ -1,7 +1,7 @@
 # /src/database/login_to_sql_server.py
 from logging import getLogger
 from sqlite3 import connect, Error
-from log_scripts.set_logger import set_logger
+from src.log_scripts.set_logger import set_logger
 # logger setup
 logger = getLogger(__name__)
 logger = set_logger(logger)

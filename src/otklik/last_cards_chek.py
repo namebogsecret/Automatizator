@@ -1,18 +1,18 @@
 #/crc/otklik/last_cards_chek.py
 from logging import getLogger
-from otklik.load_card_html import load_card_html
-from database.update_students_data import update_students_data
-from log_scripts.set_logger import set_logger
+from src.otklik.load_card_html import load_card_html
+from src.database.update_students_data import update_students_data
+from src.log_scripts.set_logger import set_logger
 #from database.temp_removed import is_temp_removed
 #from database.temp_removed import remove_temp_removed
-from database.temp_removed import add_temp_removed
+from src.database.temp_removed import add_temp_removed
 from selenium.webdriver import Chrome
-from database.table_handle import Database_Simple_Table
+from src.database.table_handle import Database_Simple_Table
 from datetime import datetime
-from parsing_card.has_right_price import has_right_price
-from parsing_card.pars_prices import parse_prices
+from src.parsing_card.has_right_price import has_right_price
+from src.parsing_card.pars_prices import parse_prices
 #from constants.constants import my_price
-from configuration.read_strings_from_file import read_strings_from_file
+from src.configuration.read_strings_from_file import read_strings_from_file
 
 
 

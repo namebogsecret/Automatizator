@@ -1,8 +1,8 @@
 # /src/database/create_db.py
 from logging import getLogger
-from constants.pathes import db_path
+from src.constants.pathes import db_path
 from sqlite3 import connect, Error
-from log_scripts.set_logger import set_logger
+from src.log_scripts.set_logger import set_logger
 # logger setup
 logger = getLogger(__name__)
 logger = set_logger(logger)

@@ -4,7 +4,7 @@
 
 def pik(frequency=6000.0,  volume=0.25,duration=0.05, sample_rate=44100):
     return
-    # Генерируем сигнал с заданными параметрами
+    """# Генерируем сигнал с заданными параметрами
     t = linspace(0, duration, int(duration * sample_rate), endpoint=False)
     signal = volume * sin(2 * pi * frequency * t)
 
@@ -23,4 +23,4 @@ def pik(frequency=6000.0,  volume=0.25,duration=0.05, sample_rate=44100):
     # Закрываем звуковое устройство и PyAudio объект
     stream.stop_stream()
     stream.close()
-    p.terminate()
+    p.terminate()"""

@@ -3,10 +3,10 @@ from logging import getLogger
 from constants.pathes import db_path
 from sqlite3 import Error
 from database.login_to_sql_server import login_to_sql_server
-from time_pars.get_real_datetime import get_real_datetime
-from log_scripts.set_logger import set_logger
-from database.price_database import PricesDatabase
-from parsing_card.pars_prices import parse_prices
+from src.time_pars.get_real_datetime import get_real_datetime
+from src.log_scripts.set_logger import set_logger
+from src.database.price_database import PricesDatabase
+from src.parsing_card.pars_prices import parse_prices
 
 # logger setup
 logger = getLogger(__name__)

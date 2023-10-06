@@ -3,18 +3,18 @@
 from random import random
 from time import sleep
 #from capcha import take_screenshot
-from capcha.solve_capcha import solve_capcha
-from configuration.read_strings_from_file import read_strings_from_file
-from otklik.is_it_on_the_page import WebScraper
-from webdriver.login import login
-from webdriver.scroll import scroll_down
+from src.capcha.solve_capcha import solve_capcha
+from src.configuration.read_strings_from_file import read_strings_from_file
+from src.otklik.is_it_on_the_page import WebScraper
+from src.webdriver.login import login
+from src.webdriver.scroll import scroll_down
 #from selenium import webdriver
 from logging import getLogger
-from log_scripts.set_logger import set_logger
+from src.log_scripts.set_logger import set_logger
 
 ##from selenium import webdriver
 from selenium.webdriver import Chrome, ChromeOptions, Firefox, FirefoxOptions, Safari, SafariOptions
-from capcha.take_screenshot import take_screenshot
+from src.capcha.take_screenshot import take_screenshot
 from selenium.webdriver.chrome.service import Service
 import json
 from os.path import exists

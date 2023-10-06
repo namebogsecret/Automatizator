@@ -3,7 +3,7 @@ from os import listdir
 from re import search as re_search
 from sqlite3 import connect, Error, Connection
 
-from add_message import add_message
+from src.add_message import add_message
 
 def read_and_add_messages_to_db(conn: Connection, answers_folder: str) -> None:
     

@@ -7,10 +7,10 @@ sys.path.append("/Volumes/Untitled/Automatizator/src/")"""
 
 import requests
 import time
-from configuration.read_strings_from_file import read_strings_from_file
+from src.configuration.read_strings_from_file import read_strings_from_file
 #import base64
 from logging import getLogger
-from log_scripts.set_logger import set_logger
+from src.log_scripts.set_logger import set_logger
 
 # logger setup
 logger = getLogger(__name__)

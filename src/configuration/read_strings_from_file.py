@@ -1,7 +1,6 @@
 def read_strings_from_file(file_path = "src/configuration/strings.txt"):
     strings_dict = {}
     current_key = None
-
     with open(file_path, 'r', encoding='utf-8') as file:
         for line in file:
             if line.startswith('[') and line.endswith(']\n'):

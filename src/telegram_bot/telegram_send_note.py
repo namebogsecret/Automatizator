@@ -1,7 +1,7 @@
 import asyncio
 from telegram import Bot
 #from telegram import request
-from configuration.read_strings_from_file import read_strings_from_file
+from src.configuration.read_strings_from_file import read_strings_from_file
 
 class TelegramBot:
     def __init__(self, chat_id, numer_of_bot: int = 1):

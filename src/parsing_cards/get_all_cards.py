@@ -1,8 +1,8 @@
 #/src/parsing_cards/get_all_cards.py
 from logging import getLogger
 #from bs4 import BeautifulSoup
-from log_scripts.set_logger import set_logger
-from otklik.is_it_on_the_page import WebScraper
+from src.log_scripts.set_logger import set_logger
+from src.otklik.is_it_on_the_page import WebScraper
 logger = getLogger(__name__)
 logger = set_logger(logger)
 class CardGetter:

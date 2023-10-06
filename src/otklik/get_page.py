@@ -1,7 +1,7 @@
 from selenium.webdriver import Safari
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
 from logging import getLogger
-from log_scripts.set_logger import set_logger
+from src.log_scripts.set_logger import set_logger
 
 logger = getLogger(__name__)
 logger = set_logger(logger)

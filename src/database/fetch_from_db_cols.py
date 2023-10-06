@@ -1,9 +1,9 @@
 import sqlite3
 
-from database.login_to_sql_server import login_to_sql_server
-from constants.pathes import db_path
-from parsing_card.pars_prices import parse_prices
-from database.price_database import PricesDatabase
+from src.database.login_to_sql_server import login_to_sql_server
+from src.constants.pathes import db_path
+from src.parsing_card.pars_prices import parse_prices
+from src.database.price_database import PricesDatabase
 
 
 

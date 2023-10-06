@@ -1,7 +1,7 @@
 #/src/database/update_students_data.py
 from logging import getLogger
-from sound.pik import pik
-from log_scripts.set_logger import set_logger
+from src.sound.pik import pik
+from src.log_scripts.set_logger import set_logger
 logger = getLogger(__name__)
 logger = set_logger(logger)
 
