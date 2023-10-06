@@ -55,6 +55,7 @@ last_time_otklik = time()
 read_dictionaries_from_file('src/configuration/dictionaries_old.json')
 strings_dict = read_strings_from_file()
 cards_at_a_time = int(strings_dict["cards_at_a_time"])
+time_for_otklik = int(strings_dict["time_for_otklik"])
 scrolls = int(strings_dict["scrolls"])
 url2 = strings_dict["second_url"]
 
@@ -66,12 +67,15 @@ logger.info("Запуск программы в %s", start_time)
 #scrolls = 2
 
 poluchat_li_ostalos = int(strings_dict["poluchat_li_ostalos"])
-time_for_otklik = int(strings_dict["time_for_otklik"])
+
 
 CAPTCHA_IS_SOLVED = False
 #@profile
 def timer():
     global CAPTCHA_IS_SOLVED
+    global time_for_otklik
+    strings_dict = read_strings_from_file()
+    time_for_otklik = int(strings_dict["time_for_otklik"])
     bots3 = TelegramBots(3)
     sleep(30)
     times = 0
@@ -109,6 +113,9 @@ def timer():
 #@profile
 def main_loop():
     global last_time_otklik
+    global scrolls
+    global time_for_otklik
+    global cards_at_a_time
     bots1 = TelegramBots(1)
     bots2 = TelegramBots(2)
     bots1.to_all_mine("Запустился бот %s" % start_time.strftime("%d.%m.%Y %H:%M:%S"),
@@ -237,6 +244,9 @@ def main_loop():
         logger.info(f"-----идет цикл {ciklov} ------")
         timer_stop = time()
         #driver.save_screenshot(f"screenshot_{timer_stop}.png")
+        strings_dict = read_strings_from_file()
+        cards_at_a_time = int(strings_dict["cards_at_a_time"])
+        time_for_otklik = int(strings_dict["time_for_otklik"])
         proshlo_vremeni = timer_stop - timer_start
         if not flag.stop and delta > 0 and delta_otkl == 0 and proshlo_vremeni < time_for_otklik:
             try:
@@ -290,7 +300,9 @@ def main_loop():
         #app.state_label["text"] = "State: Trying to open main page."
         collect()
         if not flag.stop:
-        
+            strings_dict = read_strings_from_file()
+            cards_at_a_time = int(strings_dict["cards_at_a_time"])
+            time_for_otklik = int(strings_dict["time_for_otklik"])
             try:
                 driver.get(url2)
                 strings_dict = read_strings_from_file()
