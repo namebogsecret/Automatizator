@@ -310,7 +310,7 @@ def main_loop():
                 scroll_down(driver, scrolls)
                 #app.state_label["text"] = "State: Main page opening..."
                 sleep(20 + randint(-3, 3))
-                scroll_down(driver, 2)
+                #scroll_down(driver, 2)
                 ws = WebScraper(driver, "dict_otklik")
                 new_messages = ws.is_it_on_the_page("new_messages")
                 if new_messages:
