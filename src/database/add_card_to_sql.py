@@ -1,8 +1,8 @@
 # /src/database/add_card_to_sql.py
 from logging import getLogger
-from constants.pathes import db_path
+from src.constants.pathes import db_path
 from sqlite3 import Error
-from database.login_to_sql_server import login_to_sql_server
+from src.database.login_to_sql_server import login_to_sql_server
 from src.time_pars.get_real_datetime import get_real_datetime
 from src.log_scripts.set_logger import set_logger
 from src.database.price_database import PricesDatabase

@@ -12,7 +12,7 @@ from src.constants.texts import answer1
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from src.sound.pik import pik
-from src.otklik.is_it_on_the_page import is_it_on_the_page
+#from src.otklik.is_it_on_the_page import is_it_on_the_page
 from selenium.webdriver.common.by import By
 from src.constants.dict import dict_otklik
 from src.otklik.get_id_from_url import get_id_from_url
@@ -156,9 +156,9 @@ def load_card_html(url, driver):
         return "Error"
     sleep(2+ random())
     
-    if not filling_the_card(driver, id):
+    """if not filling_the_card(driver, id):
         logger.error("Не получилось заполнить карточку %s", id)
-        return "Error"
+        return "Error"""
     
     
     

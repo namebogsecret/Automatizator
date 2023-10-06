@@ -7,7 +7,7 @@ if getattr(sys, 'frozen', False):
 else:
     src_path = dirname(abspath(__file__))
 sys.path.append(src_path)"""
-from configuration.read_strings_from_file import read_strings_from_file
+from src.configuration.read_strings_from_file import read_strings_from_file
 
 from sys import exit as sys_exit
 from datetime import datetime, timedelta
@@ -15,38 +15,38 @@ from random import randint
 from threading import Thread
 #import AppKit as appkit
 from time import sleep, time #strftime, gmtime, 
-from database.login_to_sql_server import login_to_sql_server
-from constants.pathes import db_path
-from otklik.last_cards_chek import last_cards_check
-from parsing_cards.update_all_cards import CardUpdater
+from src.database.login_to_sql_server import login_to_sql_server
+from src.constants.pathes import db_path
+from src.otklik.last_cards_chek import last_cards_check
+from src.parsing_cards.update_all_cards import CardUpdater
 from logging import getLogger
-from log_scripts.set_logger import set_logger
-from log_scripts.set_logger import logs_dir, archive_large_logs, archive_old_logs
-from webdriver.prepare_page import prepare_page
+from src.log_scripts.set_logger import set_logger
+from src.log_scripts.set_logger import logs_dir, archive_large_logs, archive_old_logs
+from src.webdriver.prepare_page import prepare_page
 #from constants.pathes import stop_file
-from webdriver.scroll import scroll_down
+from src.webdriver.scroll import scroll_down
 from gc import collect
 
 #from tkinter import Tk
 #from visual.form import App
 #from constants.pathes import stop_file
-from log_scripts.close_logs import close_log_files
+from src.log_scripts.close_logs import close_log_files
 
 
 #from visual.form import App
 
-from constants.flags import flag
+from src.constants.flags import flag
 #import telegram_bot.telegram_bot_get_id as bot
-from telegram_bot.telegram_send_note import TelegramBots
-from otklik.is_it_on_the_page import WebScraper
+from src.telegram_bot.telegram_send_note import TelegramBots
+from src.otklik.is_it_on_the_page import WebScraper
 #from constants.dict import dict_otklik
-from sound.pik import pik
+from src.sound.pik import pik
 #from constants.dicts_def import dicts
 #from utils.how_many_files import how_many_files
-from configuration.read_dictionaries_from_file import read_dictionaries_from_file
+from src.configuration.read_dictionaries_from_file import read_dictionaries_from_file
 import json
 
-from stata.get_ostalos import get_ostalos
+from src.stata.get_ostalos import get_ostalos
 #from memory_profiler import profile
 
 logger = getLogger(__name__)
