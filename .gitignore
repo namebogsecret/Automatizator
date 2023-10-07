@@ -44,3 +44,5 @@ cookies_.txt
 cookies.txt
 logs
 files
+migrate
+.env
