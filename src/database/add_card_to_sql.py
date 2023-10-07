@@ -1,7 +1,6 @@
 # /src/database/add_card_to_sql.py
 from logging import getLogger
 from constants.pathes import db_path
-from sqlite3 import Error
 from database.login_to_sql_server import login_to_sql_server
 from time_pars.get_real_datetime import get_real_datetime
 from log_scripts.set_logger import set_logger
@@ -12,27 +11,35 @@ from parsing_card.pars_prices import parse_prices
 logger = getLogger(__name__)
 logger = set_logger(logger)
 
-def add_card_to_sql(sql, card: dict):
+def add_card_to_sql(connection, card: dict):
     if card['id'] == "None":
         logger.error("Карточка с id = None не добавлена в базу данных")
         return False
-    c = sql.cursor()
+    
     time = card['posted']
     if time == "None":
         time = "01 января 00:00"
     dt_str, timestamp = get_real_datetime(time)
+
     # SQL-запрос для добавления данных в таблицу
-    sqld = 'INSERT INTO Applications VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-    data = (card['url'], card['id'], card['vizited'], card['img1'], card['img2'], card['schedule'], card['class_description'], card['in_time'], card['price'], card['distant'], card['address'], card['price_all'], card['ot_do'], card['subject'], card['name'], card['school'], card['posted'], card['html'], timestamp, dt_str, "", card['modified'], timestamp)
-    pd = PricesDatabase(sql)
+    sqld = '''INSERT INTO Applications 
+              VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
+    data = (card['url'], card['id'], card['vizited'], card['img1'], card['img2'], card['schedule'], 
+            card['class_description'], card['in_time'], card['price'], card['distant'], card['address'], 
+            card['price_all'], card['ot_do'], card['subject'], card['name'], card['school'], card['posted'], 
+            card['html'], timestamp, dt_str, "", card['modified'], timestamp)
+
+    pd = PricesDatabase(connection)
     ot, do = parse_prices(card['ot_do'], card['price'])
     pd.add_price_range(card['id'], ot, do)
+
     try:
-        # Выполнение запроса и сохранение изменений
-        c.execute(sqld, data)
+        cursor = connection.cursor()
+        cursor.execute(sqld, data)
+        connection.commit()
         logger.info('Карточка с id = %s добавлена в базу данных', card['id'])
-        return c.lastrowid
-    except Error as error:
+        return cursor.fetchone()[0]
+    except Exception as error:
         logger.error("Ошибка при выполнении запроса:", error)
         return False
 
