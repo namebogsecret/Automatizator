@@ -220,7 +220,7 @@ def load_card_html(url, driver, sql) -> tuple:
         if w10.is_it_on_the_page("chat_page"):
             logger.info("Открылся чат по заказу %s, пробуем отправить доп инфо", id)
             sleep(2)
-            to_send = randint(0, 2)
+            """to_send = randint(0, 2)
             if to_send == 0:
                 logger.info("Не отправляем доп инфо %s", id)
             elif to_send in [1, 2]:
@@ -237,7 +237,7 @@ def load_card_html(url, driver, sql) -> tuple:
                         f.write(message)
                     add_message(sql, id, message, start_time, None, None)
             else:
-                logger.error("Ошибка")
+                logger.error("Ошибка")"""
         return "Sent", html, html_choose, html_otklik_param, all_text_to_gpt_with_numbers, ban, limit
     html = driver.page_source
     logger.error("Отклик не отправлен на карточке %s", id)

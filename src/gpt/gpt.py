@@ -37,8 +37,8 @@ def gpt(html_about:str, id: str, all_text_to_gpt_with_numbers:str, witch:int = 1
         user_date, time_d = ask_gpt(client3, get_userdate, client3_temp, 210, id)
     except Exception as _:
         user_date = html_about
-    
-    middle_one = randint(1,3)
+
+    """middle_one = randint(1,3)
     
     midle_text = strings_dict[f'midle_text_{middle_one}']
     request = get_request1(witch, user_date)
@@ -47,9 +47,13 @@ def gpt(html_about:str, id: str, all_text_to_gpt_with_numbers:str, witch:int = 1
     answer2, time_dur = ask_gpt(client, request, temp, timeout, id)
     start_time = time()
     write_answer_to_file(start_time, f"{answer1} {midle_text} {answer2}", temp, time_dur, id, sql = sql)
-    return f"{answer1} {midle_text} {answer2}"
-    request = get_request(witch, html_about)
+    return f"{answer1} {midle_text} {answer2}"""
+
+    request = get_request(witch, user_date)
+
     answer, time_dur = ask_gpt(client, request, temp, timeout, id)
+    start_time = time()
+    write_answer_to_file(start_time, f"{answer}", temp, time_dur, id, sql = sql)
     return answer
 
 if __name__ == "__main__":

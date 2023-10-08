@@ -13,6 +13,7 @@ from parsing_card.has_right_price import has_right_price
 from parsing_card.pars_prices import parse_prices
 #from constants.constants import my_price
 from configuration.read_strings_from_file import read_strings_from_file
+from database.for_last_card_check import get_student, get_urls, get_applications
 
 
 
@@ -30,11 +31,10 @@ def last_cards_check(number_of_cards: int, sql, driver: Chrome, cards_parsed, ot
     if datetime.now() > datetime(datetime.now().year, datetime.now().month, datetime.now().day, 1, 30) and datetime.now() < datetime(datetime.now().year, datetime.now().month, datetime.now().day, 2, 0):
         limit_tabel.delete_all_from_table()
     logger.info("Проверка последних %s карточек", number_of_cards)
-    cursor = sql.cursor()
+    #cursor = sql.cursor()
     for card in cards_parsed:
-        cursor.execute("SELECT id FROM studentsdata WHERE id = ?", (card['id'],))
-        if cursor.fetchone() is None:
-            
+        #cursor.execute("SELECT id FROM studentsdata WHERE id = ?", (card['id'],))
+        if get_student(sql, card['id']) is None:
             if card['ot_do'] is None:
                 lower_price, upper_price = parse_prices(None, card['price'])
             else:
@@ -94,24 +94,27 @@ def last_cards_check(number_of_cards: int, sql, driver: Chrome, cards_parsed, ot
                 errors += 1
         else:
             logger.info("Карточка %s уже проверена", card['id'])
-    try:
+    """try:
         cursor.execute("SELECT url FROM Applications ORDER BY timestamp_last DESC LIMIT ?", (number_of_cards,))
-    except Exception as e:
-        logger.error("Не удалось выполнить запрос к базе данных. Error: %s", str(e))
+    except Exception as e:"""
+    urls = get_urls(sql, number_of_cards)
+    if urls is None:
+        logger.error("Не удалось выполнить запрос к базе данных.")
         errors += 1
         return otklikov, vakansiy, deleted, errors, nepodhodit, banned, limited
-    cursor.execute("SELECT url, ot_do, price FROM Applications WHERE NOT EXISTS (SELECT 1 FROM StudentsData WHERE StudentsData.id = Applications.id) ORDER BY timestamp_last DESC LIMIT ?", (number_of_cards,))
-    rows = cursor.fetchall()
-    if len(rows) == 0:
+    """cursor.execute("SELECT url, ot_do, price FROM Applications WHERE NOT EXISTS (SELECT 1 FROM StudentsData WHERE StudentsData.id = Applications.id) ORDER BY timestamp_last DESC LIMIT ?", (number_of_cards,))
+    rows = cursor.fetchall()"""
+    applications = get_applications(sql, number_of_cards)
+    if len(applications) == 0:
         logger.info("Нет карточек для добавления в базу данных")
         errors += 1
         return otklikov, vakansiy, deleted, errors, nepodhodit, banned, limited
     else:
         logger.info("Карточки для добавления:")
-        for row in rows:
+        for row in applications:
             start_index = row[0].find('o=') + 2
             end_index = row[0].find('&', start_index)
-            id = row[0][start_index:end_index]
+            student_id = row[0][start_index:end_index]
             logger.info(row[0])
             if row[1] is None:
                 if row[2] is None:
@@ -124,52 +127,52 @@ def last_cards_check(number_of_cards: int, sql, driver: Chrome, cards_parsed, ot
                 else:
                     lower_price, upper_price = parse_prices(row[1], row[2])
             if not has_right_price(lower_price, upper_price, my_price):
-                logger.info("Карточка %s не подходит по цене", id)
+                logger.info("Карточка %s не подходит по цене", student_id)
                 #nepodhodit += 1
                 continue
-            if temp_removed.check_if_exists(id):
-                logger.info("Карточка %s находится в базе отложенных", id)
+            if temp_removed.check_if_exists(student_id):
+                logger.info("Карточка %s находится в базе отложенных", student_id)
                 continue
-            if ban_tabel.check_if_exists(id):
-                logger.info("Карточка %s находится в базе забаненных", id)
+            if ban_tabel.check_if_exists(student_id):
+                logger.info("Карточка %s находится в базе забаненных", student_id)
                 continue
-            if limit_tabel.check_if_exists(id):
-                logger.info("Карточка %s находится в базе лимитов", id)
+            if limit_tabel.check_if_exists(student_id):
+                logger.info("Карточка %s находится в базе лимитов", student_id)
                 continue
             result, html, html_choose, html_otklik_param, all_text, ban, limit = load_card_html(row[0], driver, sql)
             if result == "Vakans":
                 vakansiy += 1
-                logger.info("Заполняем вакансию %s", id)
+                logger.info("Заполняем вакансию %s", student_id)
                 update_students_data(row[0], sql, "Vakans", html, html_choose, html_otklik_param, all_text)
             elif result == "Allready":
                 otklikov += 1
-                logger.info("Уже откликнулись %s", id)
+                logger.info("Уже откликнулись %s", student_id)
                 update_students_data(row[0], sql, "Allready", html, html_choose, html_otklik_param, all_text)
             elif result == "Error":
                 errors += 1
-                logger.info("Ошибка см лог load_card_html %s", id)
+                logger.info("Ошибка см лог load_card_html %s", student_id)
             elif result == "Nepodhodit":
                 update_students_data(row[0], sql, "NePodhodit", html, html_choose, html_otklik_param, all_text)
-                logger.info("Не подходит %s", id)
+                logger.info("Не подходит %s", student_id)
                 nepodhodit += 1
             elif result == "Sent":
                 otklikov += 1
-                logger.info("Добавляем откликнулись %s", id)
+                logger.info("Добавляем откликнулись %s", student_id)
                 update_students_data(row[0], sql, "Allready", html, html_choose, html_otklik_param, all_text)
             elif result == "Deleted":
                 deleted += 1
-                logger.info("Карточка %s уже удалена", id)
-                temp_removed.add_to_table(id)
-                #add_temp_removed(id, sql, html)
+                logger.info("Карточка %s уже удалена", student_id)
+                temp_removed.add_to_table(student_id)
+                #add_temp_removed(student_id, sql, html)
             elif result == "Ban":
-                if not ban_tabel.check_if_exists(id):
-                    ban_tabel.add_to_table(id)
+                if not ban_tabel.check_if_exists(student_id):
+                    ban_tabel.add_to_table(student_id)
                     banned += 1
             elif result == "Limit":
-                if not limit_tabel.check_if_exists(id):
-                    limit_tabel.add_to_table(id)
+                if not limit_tabel.check_if_exists(student_id):
+                    limit_tabel.add_to_table(student_id)
                     limited += 1
             else:
                 errors += 1
-                logger.error("Неизвестный результат %s", id)
+                logger.error("Неизвестный результат %s", student_id)
         return otklikov, vakansiy, deleted, errors, nepodhodit, banned, limited
