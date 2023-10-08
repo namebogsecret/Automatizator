@@ -1,6 +1,6 @@
 from psycopg2 import connect, extensions
 from logging import getLogger
-from log_scripts.set_logger import set_logger
+from src.log_scripts.set_logger import set_logger
 
 
 

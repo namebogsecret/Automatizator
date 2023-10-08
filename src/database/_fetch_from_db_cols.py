@@ -9,7 +9,7 @@ from src.database.price_database import PricesDatabase
 
 
 # Открываем соединение с базой данных
-conn = login_to_sql_server(db_path)
+conn = login_to_sql_server()
 
 if conn is None:
     exit()

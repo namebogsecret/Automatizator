@@ -2,7 +2,7 @@
 from logging import getLogger
 from typing import Any
 import psycopg2
-from log_scripts.set_logger import set_logger
+from src.log_scripts.set_logger import set_logger
 
 # logger setup
 logger = getLogger(__name__)

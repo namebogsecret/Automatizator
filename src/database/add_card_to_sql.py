@@ -57,7 +57,7 @@ def add_card_to_sql(connection, card: dict):
 
 
 def main():
-    sql = login_to_sql_server(db_path)
+    sql = login_to_sql_server()
     if sql is None:
         logger.error('Ошибка при подключении к базе данных')
         return False
