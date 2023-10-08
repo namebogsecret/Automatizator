@@ -49,3 +49,4 @@ files
 migrate
 .env
 repetitors.sqlc
+capcha
