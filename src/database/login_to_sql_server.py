@@ -32,4 +32,4 @@ def login_to_sql_server():
         return None
     
 if __name__ == "__main__":
-    login_to_postgres()
+    login_to_sql_server()

@@ -15,20 +15,20 @@ def check_time_difference(dt1, dt2, max_time=2):
     return delta <= max_difference
 
 def get_date_time_from_sql(card, connection):
-    id = card['id']
+    student_id = card['id']
     try:
         # Create a cursor
         cursor = connection.cursor()
         # Execute the query
-        cursor.execute("SELECT datetime FROM Applications WHERE id = %s", (id,))
+        cursor.execute("SELECT datetime FROM Applications WHERE id = %s", (student_id,))
         # Fetch all the rows
         rows = cursor.fetchall()
-        logger.debug('Количество карточек с id = %s в базе данных: %s', id, len(rows))
+        logger.debug('Количество карточек с id = %s в базе данных: %s', student_id, len(rows))
         if not rows:
-            logger.debug('Карточки с id = %s не было в базе данных', id)
+            logger.debug('Карточки с id = %s не было в базе данных', student_id)
             return False
         else:
-            logger.debug('Карточка с id = %s была в базе данных', id)
+            logger.debug('Карточка с id = %s была в базе данных', student_id)
             return rows[0][0]
     except Exception as e:
         logger.error(f"Ошибка при работе с базой данных: {e}")
@@ -38,17 +38,17 @@ def get_date_time_from_sql(card, connection):
         cursor.close()
 
 def was_not_modified(card, connection):
-    id = card['id']
+    student_id = card['id']
     try:
         # Create a cursor
         cursor = connection.cursor()
         # Execute the query
-        cursor.execute("SELECT * FROM Applications WHERE id = %s AND modified = 0", (id,))
+        cursor.execute("SELECT * FROM Applications WHERE id = %s AND modified = 0", (student_id,))
         # Fetch all the rows
         rows = cursor.fetchall()
-        logger.debug('Количество карточек с id = %s в базе данных: %s', id, len(rows))
+        logger.debug('Количество карточек с id = %s в базе данных: %s', student_id, len(rows))
         if not rows:
-            logger.debug('Карточки с id = %s уже была изменена', id)
+            logger.debug('Карточки с id = %s уже была изменена', student_id)
             return False
         else:
             datetime = get_date_time_from_sql(card, connection)
@@ -58,13 +58,13 @@ def was_not_modified(card, connection):
                     time = "01 января 00:00"
                 dt_str, timestamp = get_real_datetime(time)
                 if check_time_difference(datetime, dt_str, 2):
-                    logger.debug('Карточка с id = %s не была изменена', id)
+                    logger.debug('Карточка с id = %s не была изменена', student_id)
                     return True
                 else:
-                    logger.debug('Карточка с id = %s была изменена', id)
+                    logger.debug('Карточка с id = %s была изменена', student_id)
                     return False
             else:
-                logger.error('Не смогли достать timedate form sql Карточка с id = %s не была изменена', id)
+                logger.error('Не смогли достать timedate form sql Карточка с id = %s не была изменена', student_id)
                 return False
     except Exception as e:
         logger.error(f"Ошибка при работе с базой данных: {e}")

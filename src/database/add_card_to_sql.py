@@ -30,9 +30,14 @@ def add_card_to_sql(connection, card: dict):
             card['price_all'], card['ot_do'], card['subject'], card['name'], card['school'], card['posted'], 
             card['html'], timestamp, dt_str, "", card['modified'], timestamp)
 
-    pd = PricesDatabase(connection)
-    ot, do = parse_prices(card['ot_do'], card['price'])
-    pd.add_price_range(card['id'], ot, do)
+    try:
+        pd = PricesDatabase(connection)
+        ot, do = parse_prices(card['ot_do'], card['price'])
+        pd.add_price_range(card['id'], ot, do)
+        logger.info('Диапазон цен добавлен в базу данных')
+    except Exception as error:
+        logger.error("Ошибка при добавлении диапазона цен: %s", error)
+        return False
 
     try:
         cursor = connection.cursor()
