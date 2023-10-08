@@ -39,12 +39,15 @@ def add_card_to_sql(connection, card: dict):
         logger.error("Ошибка при добавлении диапазона цен: %s", error)
         return False
 
-    try:
+    try: 
         cursor = connection.cursor()
         cursor.execute(sqld, data)
+        #added_card_id = cursor.fetchone()[0]
         connection.commit()
         logger.info('Карточка с id = %s добавлена в базу данных', card['id'])
-        return cursor.fetchone()[0]
+        #return cursor.fetchone()[0]
+        #return added_card_id
+        return True
     except Exception as error:
         logger.error("Ошибка при выполнении запроса: %s", error)
         connection.rollback()
