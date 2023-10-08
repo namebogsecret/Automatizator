@@ -1,4 +1,5 @@
 # Данный модуль решает капчу, если она есть на странице
+
 from src.capcha.element_is_displayed import element_is_displayed
 from src.capcha.auto_capcha import auto_capcha
 from src.capcha.capcha_get_elements import capcha_get_elements
@@ -6,11 +7,14 @@ from src.capcha.take_screenshot import take_screenshot
 from src.capcha.click_capcha_elements import click_capcha_elements
 from src.capcha.parse_answer import parse_answer
 from src.capcha.image_compresser import compress_image3
+from math import sqrt
 from logging import getLogger
 from src.log_scripts.set_logger import set_logger
 #from selenium.webdriver.common.by import By
 from time import sleep, time
 from random import random
+from os import makedirs
+from os.path import exists
 
 from src.otklik.is_it_on_the_page import WebScraper
 from src.capcha.capcha_got_new_elements import capcha_got_new_elements
@@ -43,7 +47,10 @@ def solve_capcha(driver):
         capcha_scraper = WebScraper(driver, "dict_capcha")
         page_html = driver.page_source
         timestamp = str(int(time()))
-        with open(f"capcha_not_cklicked_{timestamp}.html", "w") as file:
+        captcha_dir = 'captcha'
+        if not exists(captcha_dir):
+            makedirs(captcha_dir)
+        with open(f"{captcha_dir}/capcha_not_cklicked_{timestamp}.html", "w") as file:
             file.write(page_html)
         logger.info("Решение капчи")
         # Проверка наличия капчи
@@ -79,7 +86,11 @@ def solve_capcha(driver):
         instructions_screenshot = compress_image3(instructions_screenshot)
         logger.info("Сжатие изображения инструкций")
         # Решение капчи
-        capcha_solved = auto_capcha(capcha_screenshot, instructions_screenshot)
+        rows = sqrt(len(capcha_elements))
+        if rows != int(rows):
+            logger.error(f"Ошибка в количестве элементов капчи {rows} {len(capcha_elements)}")
+            continue
+        capcha_solved = auto_capcha(capcha_screenshot, instructions_screenshot, rows)
         logger.info(f"Решение капчи {str(capcha_solved)}")
         if not capcha_solved:
             logger.warning("Капча не решена")
@@ -118,7 +129,7 @@ def solve_capcha(driver):
         except Exception as e:
             logger.info(f"Капча пропала занчит решена {e}")
             return True
-        with open(f"capcha_cklicked_{timestamp}.html", "w") as file:
+        with open(f"{captcha_dir}/capcha_cklicked_{timestamp}.html", "w") as file:
             file.write(page_html)
         try:
             capcha_scraper = WebScraper(driver, "dict_capcha")

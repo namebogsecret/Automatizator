@@ -101,7 +101,7 @@ def ater_table(file_path):
             ot_do TEXT, 
             subject TEXT, 
             name TEXT, 
-            school INTEGER, 
+            school TEXT, 
             posted TEXT,
             html TEXT)''')
     logger.info('Таблица Applications создана')

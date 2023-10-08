@@ -1,4 +1,3 @@
-#/src/database/update_card_in_sql.py
 debug = True
 # create_db.py
 from logging import getLogger
@@ -22,8 +21,8 @@ def update_card_in_sql(sql, card: dict):
         time = "01 января 00:00"
     dt_str, timestamp = get_real_datetime(time)
     # SQL-запрос для добавления данных в таблицу
-    sqld = 'UPDATE Applications SET url=?, vizited=?, img1=?, img2=?, schedule=?, class_description=?, in_time=?, price=?, distant=?, address=?, price_all=?, ot_do=?, subject=?, name=?, school=?, posted=?, html=?, datetime=?, modified=?, timestamp_last=? WHERE id=?'
-    data = (card['url'], card['vizited'], card['img1'], card['img2'], card['schedule'], card['class_description'], card['in_time'], card['price'], card['distant'], card['address'], card['price_all'], card['ot_do'], card['subject'], card['name'], card['school'], card['posted'], card['html'], dt_str, card['modified'], card['id'], timestamp)
+    sqld = '''UPDATE Applications SET url=%s, vizited=%s, img1=%s, img2=%s, schedule=%s, class_description=%s, in_time=%s, price=%s, distant=%s, address=%s, price_all=%s, ot_do=%s, subject=%s, name=%s, school=%s, posted=%s, html=%s, datetime=%s, modified=%s, timestamp_last=%s WHERE id=%s'''
+    data = (card['url'], card['vizited'], card['img1'], card['img2'], card['schedule'], card['class_description'], card['in_time'], card['price'], card['distant'], card['address'], card['price_all'], card['ot_do'], card['subject'], card['name'], card['school'], card['posted'], card['html'], dt_str, card['modified'], timestamp, card['id'])
     try:
         # Выполнение запроса и сохранение изменений
         c.execute(sqld, data)
@@ -34,5 +33,8 @@ def update_card_in_sql(sql, card: dict):
         logger.info('Карточка с id = %s обновлена', card['id'])
         return c.lastrowid
     except Error as error:
-        logger.error("Ошибка при выполнении запроса:", error)
+        logger.error("Ошибка при выполнении запроса: %s", error)
+        sql.rollback()
         return False
+    finally:
+        c.close()

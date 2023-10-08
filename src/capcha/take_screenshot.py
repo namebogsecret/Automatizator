@@ -5,6 +5,8 @@ from logging import getLogger
 from src.log_scripts.set_logger import set_logger
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+from os import makedirs
+from os.path import exists
 
 # logger setup
 logger = getLogger(__name__)
@@ -26,7 +28,10 @@ def take_screenshot(element, name = 'screenshot'):
         #print (png2)
         #print (png)
         logger.info(" Скриншот капчи получен")
-        adress = f'{name}.png'
+        captcha_dir = 'captcha'
+        if not exists(captcha_dir):
+            makedirs(captcha_dir)
+        adress = f'{captcha_dir}/{name}.png'
         im = Image.open(BytesIO(png)) 
         logger.info(" Скриншот капчи открыт")
         im.save(adress)

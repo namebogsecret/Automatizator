@@ -11,6 +11,7 @@ from src.configuration.read_strings_from_file import read_strings_from_file
 #import base64
 from logging import getLogger
 from src.log_scripts.set_logger import set_logger
+from src.capcha.encode_to_base64 import encode_file_to_base64
 
 # logger setup
 logger = getLogger(__name__)
@@ -23,27 +24,27 @@ API_KEY = strings_dict['capcha_api']
 UPLOAD_URL = 'http://2captcha.com/in.php'
 RESULT_URL = 'http://2captcha.com/res.php'
 
-def auto_capcha(capcha_screenshot, instructions_screenshot):
+def auto_capcha(capcha_screenshot, instructions_screenshot, rows):
 
     """with open(capcha_screenshot, 'rb') as image_file:
         encoded_string = base64.b64encode(image_file.read()).decode('utf-8')"""
     # 1. Отправка изображения с капчей
-    with open(capcha_screenshot, 'rb') as image_file:
-        with open(instructions_screenshot, 'rb') as instructions_file:
-            logger.info("Отправка изображения с капчей")
-            response = requests.post(
-                                        UPLOAD_URL,
-                                        {
-                                            'key': API_KEY,
-                                            'method': 'post',
-                                            'recaptcha': 1,
-                                            'lang': 'en'
-                                        },
-                                        files = {
-                                            'file': image_file,
-                                            'imginstructions': instructions_file
-                                        }
-                                    )
+    captcha_base64 = encode_file_to_base64(capcha_screenshot)
+    instructions_base64 = encode_file_to_base64(instructions_screenshot)
+
+    logger.info("Отправка изображения с капчей")
+    data = {
+        'key': API_KEY,
+        'method': 'base64',
+        'recaptcha': 1,
+        'lang': 'en',
+        'recaptcharows': rows, # 1/2/3
+        'recaptchacols': rows,
+        'body': captcha_base64,
+        'imginstructions': instructions_base64
+    }
+    
+    response = requests.post(UPLOAD_URL, data=data)
 
     response_data = response.text.split('|')
     logger.info("Получение ответа")
