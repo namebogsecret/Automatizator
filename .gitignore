@@ -32,6 +32,8 @@ src/capcha/.env
 src/configuration/api.txt
 src/configuration/strings.txt
 answers/*
+
+*.sql
 dump.sql
 *.db
 sqlite3_analyzer
@@ -47,3 +49,4 @@ files
 migrate
 .env
 repetitors.sqlc
+
