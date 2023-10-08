@@ -20,7 +20,8 @@ def add_card_to_sql(connection, card: dict):
     if time == "None":
         time = "01 января 00:00"
     dt_str, timestamp = get_real_datetime(time)
-
+    if card['modified'] == "":
+        card['modified'] = None
     # SQL-запрос для добавления данных в таблицу
     sqld = '''INSERT INTO Applications 
               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
@@ -40,8 +41,11 @@ def add_card_to_sql(connection, card: dict):
         logger.info('Карточка с id = %s добавлена в базу данных', card['id'])
         return cursor.fetchone()[0]
     except Exception as error:
-        logger.error("Ошибка при выполнении запроса:", error)
+        logger.error("Ошибка при выполнении запроса: %s", error)
+        connection.rollback()
         return False
+    finally:
+        cursor.close()
 
 
 def main():

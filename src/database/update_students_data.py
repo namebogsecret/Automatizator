@@ -25,5 +25,9 @@ def update_students_data(url: str, sql, status: str, html: str, html_choose: str
         pik(100)
     except Exception as e:
         logger.error("Студента нет в базе данных. Error: %s", str(e))
+        sql.rollback()
+        return False
+    finally:
+        cursor.close()
     sql.commit()
     return True

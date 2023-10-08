@@ -38,7 +38,10 @@ def is_temp_removed(id, sql, time_delta=30):  # time_delta - время в дн�
         return True
     except Exception as e:
         logger.error("Студента с id = " + str(id) + " нет в базе отложенных. Error: %s", str(e))
+        sql.rollback()
         return False
+    finally:
+        cursor.close()
 
 def remove_temp_removed(id, sql):
     cursor = sql.cursor()

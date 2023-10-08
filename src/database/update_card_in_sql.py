@@ -33,5 +33,8 @@ def update_card_in_sql(sql, card: dict):
         logger.info('Карточка с id = %s обновлена', card['id'])
         return c.lastrowid
     except Error as error:
-        logger.error("Ошибка при выполнении запроса:", error)
+        logger.error("Ошибка при выполнении запроса: %s", error)
+        sql.rollback()
         return False
+    finally:
+        c.close()

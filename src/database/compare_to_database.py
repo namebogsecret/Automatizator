@@ -17,7 +17,10 @@ def allready_in_db(id, connection):
         return len(rows) > 0
     except Exception as e:
         logger.error(f"Ошибка при работе с базой данных: {e}")
+        connection.rollback()  # Откатываем транзакцию при возникновении ошибки
         return False
+    finally:
+        cursor.close()  # Закрываем курсор
 
 def compare_to_database(card, connection):
     if allready_in_db(card["id"], connection):

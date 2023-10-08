@@ -32,7 +32,10 @@ def get_date_time_from_sql(card, connection):
             return rows[0][0]
     except Exception as e:
         logger.error(f"Ошибка при работе с базой данных: {e}")
+        connection.rollback()
         return False
+    finally:
+        cursor.close()
 
 def was_not_modified(card, connection):
     id = card['id']
@@ -65,4 +68,7 @@ def was_not_modified(card, connection):
                 return False
     except Exception as e:
         logger.error(f"Ошибка при работе с базой данных: {e}")
+        connection.rollback()
         return False
+    finally:
+        cursor.close()

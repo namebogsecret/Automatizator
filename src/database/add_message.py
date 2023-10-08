@@ -36,3 +36,7 @@ def add_message(connection, uchenik_id: int, answer_text: str, timestamp: float,
         
     except Exception as e:
         print(f"Ошибка при работе с базой данных: {e}")
+        connection.rollback()
+        return False
+    finally:
+        cursor.close()

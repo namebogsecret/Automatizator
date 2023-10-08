@@ -167,7 +167,7 @@ def main_loop():
         ciklov += 1
         logger.info("-----начался цикл %s ------", ciklov)
         #app.state_label["text"] = "State: Opening sql..."
-        sql = login_to_sql_server(db_path)
+        sql = login_to_sql_server()
         if sql is None:
             logger.error("Не удалось подключиться к базе данных")
             return None
