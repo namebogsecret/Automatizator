@@ -32,11 +32,8 @@ src/capcha/.env
 src/configuration/api.txt
 src/configuration/strings.txt
 answers/*
-<<<<<<< HEAD
-*.db
+
 *.sql
-sqlite3_analyzer
-=======
 dump.sql
 *.db
 sqlite3_analyzer
@@ -51,4 +48,4 @@ logs
 files
 migrate
 .env
->>>>>>> c93690ade7ffcbd8f28ab413aa4a3dee02ae9f5c
+repetitors.sqlc
