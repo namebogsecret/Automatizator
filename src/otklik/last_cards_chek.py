@@ -6,7 +6,6 @@ from src.log_scripts.set_logger import set_logger
 #from database.temp_removed import is_temp_removed
 #from database.temp_removed import remove_temp_removed
 from src.database.temp_removed import add_temp_removed
-from selenium.webdriver import Chrome
 from src.database.table_handle import Database_Simple_Table
 from datetime import datetime
 from src.parsing_card.has_right_price import has_right_price
@@ -20,7 +19,45 @@ from src.database.for_last_card_check import get_student, get_urls, get_applicat
 logger = getLogger(__name__)
 logger = set_logger(logger)
 
-def last_cards_check(number_of_cards: int, sql, driver: Chrome, cards_parsed, otklikov: int, vakansiy: int, deleted: int, errors: int, nepodhodit: int, banned: int, limited: int):
+def last_cards_check(number_of_cards: int, sql, driver, cards_parsed, otklikov: int, vakansiy: int, deleted: int, errors: int, nepodhodit: int, banned: int, limited: int):
+    """
+    Функция «last_cards_check» проверяет последние карты «number_of_cards» на наличие различных условий
+    и соответствующим образом обновляет базу данных.
+    
+    :param number_of_cards: Количество карт для проверки в функции
+    :type number_of_cards: int
+    :param sql: Параметр `sql` — это объект подключения к базе данных SQL. Он используется для
+    взаимодействия с базой данных и выполнения SQL-запросов
+    :param driver: Параметр driver имеет тип Chrome и используется в качестве аргумента функции
+    load_card_html. Вероятно, это экземпляр Selenium WebDriver для Chrome
+    :type driver: Chrome
+    :param cards_parsed: Список словарей, представляющих проанализированные данные карты. Каждый словарь
+    содержит информацию о карте, такую как ее идентификатор, цена, URL-адрес и т. д
+    :param otklikov: Количество карточек, на которые уже были даны ответы
+    :type otklikov: int
+    :param vakansiy: Параметр «вакансии» представляет количество вакансий, которые были заполнены или
+    обработаны
+    :type vakansiy: int
+    :param deleted: Параметр «удалено» представляет количество карточек, которые были удалены или
+    удалены из базы данных
+    :type deleted: int
+    :param errors: Параметр errors представляет собой целое число, которое отслеживает количество
+    ошибок, возникших во время выполнения функции Last_cards_check. Оно увеличивается всякий раз, когда
+    возникает ошибка, например, сбой запроса к базе данных или неизвестный результат функции
+    load_card_html
+    :type errors: int
+    :param nepodhodit: Параметр «неподходит» используется для отслеживания количества карт, не
+    соответствующих ценовым критериям. Оно увеличивается всякий раз, когда обнаруживается, что цена
+    карты выходит за пределы указанного диапазона
+    :type nepodhodit: int
+    :param banned: Параметр «запрещен» — это целое число, которое отслеживает количество карт,
+    помеченных как запрещенные
+    :type banned: int
+    :param limited: Параметр «ограничено» представляет собой количество карт, достигших лимита и не
+    подлежащих дальнейшей обработке
+    :type limited: int
+    :return: следующие значения: откликов, вакансий, удалено, ошибки, неподходит, забанено, ограничено.
+    """
     ban_tabel = Database_Simple_Table(sql, "banned")
     strings_dict = read_strings_from_file()
     _my_price2 = strings_dict['my_price_2'] # to do
