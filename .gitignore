@@ -51,3 +51,4 @@ api
 repetitors.sqlc
 migrate
 capcha
+test_*.py

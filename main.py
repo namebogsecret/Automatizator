@@ -9,6 +9,7 @@ else:
 sys.path.append(src_path)"""
 
 from gc import collect
+import threading
 from time import sleep, time #strftime, gmtime,
 from logging import getLogger
 
@@ -25,10 +26,12 @@ from src.configuration.read_strings_from_file import read_strings_from_file
 
 from src.database.login_to_sql_server import login_to_sql_server
 from src.constants.pathes import db_path
+from src.database.ssh_login import SshDbConnector
 from src.otklik.last_cards_chek import last_cards_check
 from src.parsing_cards.update_all_cards import CardUpdater
 from src.log_scripts.set_logger import set_logger
 from src.log_scripts.set_logger import logs_dir, archive_large_logs, archive_old_logs
+from src.ssh.sshtunnel_creater import SshTunnelCreator
 from src.webdriver.prepare_page import prepare_page
 #from constants.pathes import stop_file
 from src.webdriver.scroll import scroll_down
@@ -56,9 +59,12 @@ from src.configuration.read_dictionaries_from_file import read_dictionaries_from
 from src.stata.get_ostalos import get_ostalos
 #from memory_profiler import profile
 #from src.utils.sharing import lock
+from src.utils.host_checker import host_checker
 
 
 lock = Lock()
+
+server = host_checker()
 
 logger = getLogger(__name__)
 logger = set_logger(logger)
@@ -181,7 +187,22 @@ def main_loop():
         ciklov += 1
         logger.info("-----начался цикл %s ------", ciklov)
         #app.state_label["text"] = "State: Opening sql..."
-        sql = login_to_sql_server()
+        if server == "local":
+            TUNNEL = SshTunnelCreator()
+            tunnel_thread = Thread(target=TUNNEL.create_tunnel)
+            tunnel_thread.start()
+
+            while not TUNNEL.tonnel_created:
+                sleep(0.1)
+                continue
+
+            local_port = TUNNEL.local_port
+            sql = SshDbConnector(local_port).db_connect()
+        elif server == "server":
+            sql = login_to_sql_server()
+        else:
+            logger.error("Ошибка определения сервера")
+            sys_exit("Ошибка определения сервера")
         if sql is None:
             logger.error("Не удалось подключиться к базе данных")
             return None
