@@ -1,8 +1,10 @@
-from PIL import Image
+
 import os
 import argparse
 from logging import getLogger
-from src.log_scripts.set_logger import set_logger
+from PIL import Image
+
+from src.log_scripts import set_logger
 
 # logger setup
 logger = getLogger(__name__)

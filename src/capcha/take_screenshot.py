@@ -1,12 +1,13 @@
 # Desc: Take screenshot of capcha
-from PIL import Image
-from io import BytesIO
-from logging import getLogger
-from src.log_scripts.set_logger import set_logger
-from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
 from os import makedirs
 from os.path import exists
+from io import BytesIO
+from logging import getLogger
+from PIL import Image
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
+
+from src.log_scripts import set_logger
 
 # logger setup
 logger = getLogger(__name__)

@@ -12,17 +12,19 @@ Basic Echobot example, repeats messages.
 Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
+
 import html
 import json
 import logging
 import traceback
+
 from telegram import ForceReply, Update
 from telegram.constants import ParseMode
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
-
 from telegram import __version__ as TG_VER
 import ast
-from src.configuration.read_strings_from_file import read_strings_from_file
+
+from src.configuration import read_strings_from_file
 
 strings_dict = read_strings_from_file()
 DEVELOPER_CHAT_ID = strings_dict['DEVELOPER_CHAT_ID']

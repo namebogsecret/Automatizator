@@ -1,6 +1,9 @@
+
 from logging import getLogger
-from src.sound.pik import pik
-from src.log_scripts.set_logger import set_logger
+
+#from src.sound import pik
+from src.log_scripts import set_logger
+
 logger = getLogger(__name__)
 logger = set_logger(logger)
 
@@ -21,7 +24,7 @@ def update_students_data(url: str, sql, status: str, html: str, html_choose: str
         iddb = cursor.fetchone()[0]
         logger.info("Студент с id = " + str(iddb) + " уже есть в базе данных")
         cursor.execute("INSERT INTO StudentsData (id, status, html, html_choose, html_otklik_param, all_text) VALUES (%s, %s, %s, %s, %s, %s)", (iddb, status, html, html_choose, html_otklik_param, all_text))
-        pik(100)
+        #pik(100)
     except Exception as e:
         logger.error("Студента нет в базе данных. Error: %s", str(e))
         sql.rollback()

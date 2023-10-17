@@ -2,10 +2,9 @@
 from logging import getLogger
 from os import getenv
 import psycopg2
-#from psycopg2 import Error
-#from psycopg2.extras import execute_values
 import dotenv
-from src.log_scripts.set_logger import set_logger
+
+from src.log_scripts import set_logger
 
 dotenv.load_dotenv()
 

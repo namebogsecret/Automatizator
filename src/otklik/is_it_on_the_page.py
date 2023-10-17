@@ -1,17 +1,18 @@
 
-from selenium.webdriver import Safari
-#from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.chrome.options import Options
-from selenium import webdriver
-from selenium.webdriver.common.by import By
 from logging import getLogger
-from typing import Dict, List, Union
-from src.log_scripts.set_logger import set_logger
-#from constants.dict import dict_otklik
-from src.constants.dicts_def import dicts
+from typing import List, Union
+#from selenium.webdriver import Safari
+#from selenium.webdriver.remote.webelement import WebElement
+#from selenium.webdriver.chrome.options import Options
+#from selenium import webdriver
+from selenium.webdriver.common.by import By
+
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
+from src.constants import dicts
+from src.log_scripts import set_logger
 
 logger = getLogger(__name__)
 logger = set_logger(logger)

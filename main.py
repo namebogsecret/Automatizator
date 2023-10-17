@@ -8,59 +8,63 @@ else:
     src_path = dirname(abspath(__file__))
 sys.path.append(src_path)"""
 
-from gc import collect
-import threading
-from time import sleep, time #strftime, gmtime,
-from logging import getLogger
-
-
-from sys import exit as sys_exit
-from datetime import datetime, timedelta
-from random import randint
-from threading import Thread, Lock
-#import AppKit as appkit
-
 import json
+from gc import collect
+from sys import exit as sys_exit
+from time import sleep, time
+from random import randint
+from logging import getLogger
+from datetime import datetime, timedelta
+from threading import Thread, Lock
 
-from src.configuration.read_strings_from_file import read_strings_from_file
+from src import (
+    read_strings_from_file,
+    read_dictionaries_from_file,
+    CardUpdater,
+    TelegramBots,
+    set_logger,
+    logs_dir,
+    archive_large_logs,
+    archive_old_logs,
+    close_log_files,
+    prepare_page,
+    scroll_down,
+    flag,
+    login_to_sql_server,
+    SshDbConnector,
+    last_cards_check,
+    WebScraper,
+    get_ostalos,
+    host_checker,
+    SshTunnelCreator
+)
 
-from src.database.login_to_sql_server import login_to_sql_server
-from src.constants.pathes import db_path
-from src.database.ssh_login import SshDbConnector
-from src.otklik.last_cards_chek import last_cards_check
-from src.parsing_cards.update_all_cards import CardUpdater
-from src.log_scripts.set_logger import set_logger
-from src.log_scripts.set_logger import logs_dir, archive_large_logs, archive_old_logs
-from src.ssh.sshtunnel_creater import SshTunnelCreator
-from src.webdriver.prepare_page import prepare_page
-#from constants.pathes import stop_file
-from src.webdriver.scroll import scroll_down
+"""from src.configuration import read_strings_from_file
+from src.configuration import read_dictionaries_from_file
+from src.parsing_cards import CardUpdater
+from src.telegram_bot import TelegramBots
+from src.log_scripts import set_logger
+from src.log_scripts import logs_dir, archive_large_logs, archive_old_logs
+from src.log_scripts import close_log_files
+from src.webdriver import prepare_page
+from src.webdriver import scroll_down
+from src.constants import flag
+from src.database import login_to_sql_server
+from src.database import SshDbConnector
+from src.otklik import last_cards_check
+from src.otklik import WebScraper
+from src.stata import get_ostalos
+from src.utils import host_checker
+from src.ssh import SshTunnelCreator
+"""
 
 
+
+#from src.sound.pik import pik
+#from memory_profiler import profile
 #from tkinter import Tk
 #from visual.form import App
 #from constants.pathes import stop_file
-from src.log_scripts.close_logs import close_log_files
-
-
-#from visual.form import App
-
-from src.constants.flags import flag
-#import telegram_bot.telegram_bot_get_id as bot
-from src.telegram_bot.telegram_send_note import TelegramBots
-from src.otklik.is_it_on_the_page import WebScraper
-#from constants.dict import dict_otklik
-from src.sound.pik import pik
-#from constants.dicts_def import dicts
-#from utils.how_many_files import how_many_files
-from src.configuration.read_dictionaries_from_file import read_dictionaries_from_file
-
-
-from src.stata.get_ostalos import get_ostalos
-#from memory_profiler import profile
-#from src.utils.sharing import lock
-from src.utils.host_checker import host_checker
-
 
 lock = Lock()
 
@@ -188,15 +192,15 @@ def main_loop():
         logger.info("-----начался цикл %s ------", ciklov)
         #app.state_label["text"] = "State: Opening sql..."
         if server == "local":
-            TUNNEL = SshTunnelCreator()
-            tunnel_thread = Thread(target=TUNNEL.create_tunnel)
+            tunnel = SshTunnelCreator()
+            tunnel_thread = Thread(target=tunnel.create_tunnel)
             tunnel_thread.start()
 
-            while not TUNNEL.tonnel_created:
+            while not tunnel.tonnel_created:
                 sleep(0.1)
                 continue
 
-            local_port = TUNNEL.local_port
+            local_port = tunnel.local_port
             sql = SshDbConnector(local_port).db_connect()
         elif server == "server":
             sql = login_to_sql_server()
@@ -355,8 +359,8 @@ def main_loop():
                     # {number_of_messages}"
                     bots1.rassilka(f"Новые сообщения: {number_of_messages}", False)
                     logger.info(f"Have new messages: {number_of_messages}")
-                    for tri_pika in range(3):
-                        pik(3000)
+                    """for tri_pika in range(3):
+                        pik(3000)"""
                 else:
                     #app.state_label["text"] = "State: No new messages"
                     logger.info("No new messages")

@@ -1,6 +1,9 @@
+
+from os import getenv
+import dotenv
+
+dotenv.load_dotenv()
+
 def get_api():
-    """Get the API key from the api.txt file"""
-    content = None
-    with open('src/configuration/api.txt', 'r', encoding='utf-8') as file:
-        content = file.read()
-    return content
+    api = getenv('gpt_api')
+    return api

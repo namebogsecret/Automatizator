@@ -1,3 +1,4 @@
+
 from re import search as re_search
 
 def extract_number_before_today(text):

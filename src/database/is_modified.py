@@ -1,7 +1,10 @@
+
 from datetime import timedelta, datetime
 from logging import getLogger
-from src.time_pars.get_real_datetime import get_real_datetime
-from src.log_scripts.set_logger import set_logger
+
+from src.time_pars import get_real_datetime
+from src.log_scripts import set_logger
+
 # logger setup
 logger = getLogger(__name__)
 logger = set_logger(logger)

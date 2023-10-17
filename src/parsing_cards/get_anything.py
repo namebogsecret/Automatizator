@@ -1,8 +1,10 @@
+
 #src/parsing_cards/get_anything.py
 from logging import getLogger
 from urllib.parse import urljoin
-from src.log_scripts.set_logger import set_logger
-from src.configuration.read_strings_from_file import read_strings_from_file
+
+from src.log_scripts import set_logger
+from src.configuration import read_strings_from_file
 
 # logger setup
 logger = getLogger(__name__)

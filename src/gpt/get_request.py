@@ -1,6 +1,8 @@
+
 #from constants.texts import answer1, predistoriya, pro_clienta, instrukcii
-from src.gpt.textextractor import TextExtractor
-from src.configuration.read_strings_from_file import read_strings_from_file
+from src.configuration import read_strings_from_file
+
+from .textextractor import TextExtractor
 
 def extract_text(html):
     parser = TextExtractor()

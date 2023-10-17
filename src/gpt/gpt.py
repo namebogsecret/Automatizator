@@ -5,19 +5,17 @@ if getattr(sys, 'frozen', False):
 else:
     src_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(src_path)"""
-from src.configuration.read_strings_from_file import read_strings_from_file
-from src.gpt.ask_gpt import ask_gpt
-#from requests import get, post
-#from json import dumps, loads
-#from time import time
-from src.gpt.gptclient import GPTClient
-#from constants.api import api_key as api_old
-from src.gpt.get_request import get_request, get_request1, get_request2
-from src.configuration.get_api import get_api
-from random import randint
-from time import time
 
-from src.gpt.ask_gpt import write_answer_to_file
+from time import time
+from random import randint
+
+from src.configuration import read_strings_from_file
+from src.configuration import get_api
+
+from .ask_gpt import ask_gpt
+from .gptclient import GPTClient
+from .get_request import get_request #, get_request1, get_request2
+from .ask_gpt import write_answer_to_file
 
 def gpt(html_about:str, id: str, all_text_to_gpt_with_numbers:str, witch:int = 1, gpt4: bool = True,  temp: float = 2/10, timeout=240, sql = None):
     temp = randint(1,9)/10

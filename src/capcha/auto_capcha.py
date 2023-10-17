@@ -5,13 +5,13 @@
 """import sys
 sys.path.append("/Volumes/Untitled/Automatizator/src/")"""
 
-import requests
 import time
-from src.configuration.read_strings_from_file import read_strings_from_file
-#import base64
 from logging import getLogger
-from src.log_scripts.set_logger import set_logger
-from src.capcha.encode_to_base64 import encode_file_to_base64
+import requests
+
+from src.configuration import read_strings_from_file
+from src.log_scripts import set_logger
+from .encode_to_base64 import encode_file_to_base64
 
 # logger setup
 logger = getLogger(__name__)
@@ -90,7 +90,3 @@ def auto_capcha(capcha_screenshot, instructions_screenshot, rows):
         logger.info(f"Ошибка при получении решения {result_json}")
         logger.warning(f"Ошибка при получении решения: {result_response.text}")
         return None
-
-if __name__ == '__main__':
-
-    print(auto_capcha('capcha.png', 'instructions.png')) #click:1/6/7

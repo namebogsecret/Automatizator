@@ -1,10 +1,12 @@
-from src.otklik.is_it_on_the_page import WebScraper
-from src.log_scripts.set_logger import set_logger
-from logging import getLogger
-
-from selenium.webdriver.common.keys import Keys
 
 from time import sleep
+from logging import getLogger
+from selenium.webdriver.common.keys import Keys
+
+
+
+from src.otklik import WebScraper
+from src.log_scripts import set_logger
 
 logger = getLogger(__name__)
 logger = set_logger(logger)

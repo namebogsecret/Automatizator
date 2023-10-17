@@ -1,23 +1,25 @@
 # Данный модуль решает капчу, если она есть на странице
 
-from src.capcha.element_is_displayed import element_is_displayed
-from src.capcha.auto_capcha import auto_capcha
-from src.capcha.capcha_get_elements import capcha_get_elements
-from src.capcha.take_screenshot import take_screenshot
-from src.capcha.click_capcha_elements import click_capcha_elements
-from src.capcha.parse_answer import parse_answer
-from src.capcha.image_compresser import compress_image3
+
 from math import sqrt
 from logging import getLogger
-from src.log_scripts.set_logger import set_logger
 #from selenium.webdriver.common.by import By
 from time import sleep, time
 from random import random
 from os import makedirs
 from os.path import exists
 
-from src.otklik.is_it_on_the_page import WebScraper
-from src.capcha.capcha_got_new_elements import capcha_got_new_elements
+from src.otklik import WebScraper
+from src.log_scripts import set_logger
+
+from .element_is_displayed import element_is_displayed
+from .auto_capcha import auto_capcha
+from .capcha_get_elements import capcha_get_elements
+from .take_screenshot import take_screenshot
+from .click_capcha_elements import click_capcha_elements
+from .parse_answer import parse_answer
+from .image_compresser import compress_image3
+from .capcha_got_new_elements import capcha_got_new_elements
 
 # logger setup
 logger = getLogger(__name__)

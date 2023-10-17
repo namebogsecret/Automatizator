@@ -1,8 +1,10 @@
+
 #/src/visual/form.py
 from tkinter import Label, Button, Checkbutton, Frame, Tk, ttk
 from logging import getLogger
-from src.log_scripts.set_logger import set_logger
-from src.constants.flags import flag
+
+from src.log_scripts import set_logger
+from src.constants import flag
 
 logger = getLogger(__name__)
 logger = set_logger(logger)

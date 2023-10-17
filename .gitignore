@@ -6,7 +6,7 @@
 logs/*
 src_/*
 venv/*
-*/__pycache__/*
+__pycache__
 src/build/*
 *.pyc
 src/.DS_Store
@@ -52,3 +52,5 @@ repetitors.sqlc
 migrate
 capcha
 test_*.py
+*.csv
+ucheniks_stat_otkrit

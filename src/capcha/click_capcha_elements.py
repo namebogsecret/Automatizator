@@ -1,11 +1,13 @@
 # This file contains the function that clicks the capcha elements
 #import webelement
-from selenium.webdriver.remote.webdriver import WebDriver as webdriver
 from logging import getLogger
-from src.log_scripts.set_logger import set_logger
-from time import sleep
-#from selenium.webdriver.common.action_chains import ActionChains
 from random import shuffle, uniform, random
+from time import sleep
+from selenium.webdriver.remote.webdriver import WebDriver as webdriver
+#from selenium.webdriver.common.action_chains import ActionChains
+
+from src.log_scripts import set_logger
+
 # logger setup
 logger = getLogger(__name__)
 logger = set_logger(logger)

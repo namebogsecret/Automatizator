@@ -3,13 +3,15 @@ from logging import getLogger
 from random import random
 from time import sleep
 from time import time
-from src.log_scripts.set_logger import set_logger
-from selenium.webdriver.common.action_chains import ActionChains
-from src.mouse.mouse_click import mouth_click
-from src.otklik.get_coordinates_of_element import global_location
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver import Chrome
-from src.configuration.read_strings_from_file import read_strings_from_file
+from selenium.webdriver.common.action_chains import ActionChains
+
+from src.log_scripts import set_logger
+#from src.mouse import mouth_click
+#from src.configuration import read_strings_from_file
+
+from .get_coordinates_of_element import global_location
 
 logger = getLogger(__name__)
 logger = set_logger(logger)

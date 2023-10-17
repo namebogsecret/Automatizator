@@ -1,30 +1,24 @@
+
 #/src/otklik/load_card_html.py
+from time import sleep
+import time
 from logging import getLogger
 from random import randint, random
 from re import sub
-
-from src.otklik.filling_the_card import filling_the_card
-from src.text_process.podhodit import podhodit
-from src.otklik.click import click
-
-from time import sleep
-from src.log_scripts.set_logger import set_logger
-#from constants.texts import answer1
-#from selenium.webdriver.common.action_chains import ActionChains
-#from selenium.webdriver.common.keys import Keys
-#from sound.pik import pik
-from src.otklik.is_it_on_the_page import WebScraper
-#from selenium.webdriver.common.by import By
-#from constants.dict import dict_otklik
-from src.otklik.get_id_from_url import get_id_from_url
-from src.otklik.get_page import get_page
 from bs4 import BeautifulSoup
 from selenium.webdriver.remote.webelement import WebElement
-from src.configuration.read_strings_from_file import read_strings_from_file
-import time
-from src.dialog.testing_send_message import testing_send_message
 
-from src.database.add_message import add_message
+from src.text_process import podhodit
+from src.log_scripts import set_logger
+from src.configuration import read_strings_from_file
+#from src.dialog import testing_send_message
+from src.database import add_message
+
+from .filling_the_card import filling_the_card
+from .click import click
+from .is_it_on_the_page import WebScraper
+from .get_id_from_url import get_id_from_url
+from .get_page import get_page
 
 logger = getLogger(__name__)
 logger = set_logger(logger)

@@ -1,9 +1,11 @@
 import json
 from typing import Dict, List, Tuple
 from logging import getLogger
-from src.log_scripts.set_logger import set_logger
 from os.path import exists
-from src.constants.dicts_def import dicts
+
+from src.log_scripts import set_logger
+from src.constants import dicts
+
 logger = getLogger(__name__)
 logger = set_logger(logger)
 

@@ -1,5 +1,7 @@
+
 from time import time
-from src.database.add_message import add_message
+
+from src.database import add_message
 
 class GPTSoonEndedError(Exception):
     def __init__(self, message="GPT did not finish the response."):

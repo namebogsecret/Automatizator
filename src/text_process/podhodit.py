@@ -1,7 +1,11 @@
+
 #src/text_process/podhodit.py
 """Функция, которая проверяет, подходит ли ученик"""
+
 from logging import getLogger
-from src.log_scripts.set_logger import set_logger
+
+from src.log_scripts import set_logger
+
 logger = getLogger(__name__)
 logger = set_logger(logger)
 

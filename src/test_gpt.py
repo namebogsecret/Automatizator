@@ -1,4 +1,5 @@
-from gpt.gpt import gpt
+
+from src.gpt import gpt
 
 if __name__ == "__main__":
     

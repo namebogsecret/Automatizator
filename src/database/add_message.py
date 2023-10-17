@@ -1,8 +1,9 @@
 
 from logging import getLogger
-from typing import Any
-import psycopg2
-from src.log_scripts.set_logger import set_logger
+#from typing import Any
+#import psycopg2
+
+from src.log_scripts import set_logger
 
 # logger setup
 logger = getLogger(__name__)

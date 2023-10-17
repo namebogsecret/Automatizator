@@ -1,12 +1,14 @@
+
 #/src/parsing_cards/update_all_cards.py
 from logging import getLogger
-from src.database.add_card_to_sql import add_card_to_sql
-from src.database.is_modified import was_not_modified
-from src.database.update_card_in_sql import update_card_in_sql
-from src.parsing_cards.get_all_cards import CardGetter
-from src.database.compare_to_database import compare_to_database
-from src.parsing_cards.processor_3 import CardProcessor3
-from src.log_scripts.set_logger import set_logger
+
+from src.database import add_card_to_sql
+from src.database import was_not_modified
+from src.database import compare_to_database
+from src.database import update_card_in_sql
+from src.log_scripts import set_logger
+from src.parsing_cards import CardGetter
+from src.parsing_cards import CardProcessor3
 
 # logger setup5
 logger = getLogger(__name__)

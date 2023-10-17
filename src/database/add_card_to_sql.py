@@ -1,12 +1,14 @@
 # /src/database/add_card_to_sql.py
 from logging import getLogger
-from src.constants.pathes import db_path
-from src.database.login_to_sql_server import login_to_sql_server
-from src.time_pars.get_real_datetime import get_real_datetime
-from src.log_scripts.set_logger import set_logger
-from src.database.price_database import PricesDatabase
-from src.parsing_card.pars_prices import parse_prices
 
+#from src.constants.pathes import db_path
+
+from src.time_pars import get_real_datetime
+from src.log_scripts import set_logger
+from src.parsing_card import parse_prices
+
+from .login_to_sql_server import login_to_sql_server
+from .price_database import PricesDatabase
 # logger setup
 logger = getLogger(__name__)
 logger = set_logger(logger)

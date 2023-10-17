@@ -1,8 +1,10 @@
+
 #/src/mouse/mouse_click.py
-from time import sleep
+#from time import sleep
 #import Quartz.CoreGraphics as CG
 from logging import getLogger
-from src.log_scripts.set_logger import set_logger
+
+from src.log_scripts import set_logger
 
 # logger setup
 logger = getLogger(__name__)

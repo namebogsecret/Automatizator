@@ -2,8 +2,8 @@
 #from selenium.webdriver.common.by import By
 from logging import getLogger
 #from capcha.take_screenshot import take_screenshot
-from src.log_scripts.set_logger import set_logger
-from src.otklik.is_it_on_the_page import  WebScraper
+from src.log_scripts import set_logger
+from src.otklik import  WebScraper
 
 # logger setup
 logger = getLogger(__name__)

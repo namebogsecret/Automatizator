@@ -1,19 +1,26 @@
-from logging import getLogger
-from src.otklik.click import click
-from src.sound.pik import pik
-from src.log_scripts.set_logger import set_logger
-#from otklik.click import click
+
 from time import sleep
-from src.otklik.chouse_avtootklik_text import chouse_avtootklik_text
-from random import random , randint
-#from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
+from logging import getLogger
+from random import random #, randint
+#from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver import Safari
-from src.otklik.is_it_on_the_page import WebScraper
+
+#from src.sound import pik
+from src.log_scripts import set_logger
+from src.gpt import gpt
+#from otklik.click import click
+
+from .chouse_avtootklik_text import chouse_avtootklik_text
+from .click import click
+from .is_it_on_the_page import WebScraper
+
+#from selenium.webdriver.common.by import By
+
+
 #from webdriver.scroll import scroll_down
 #from constants.dict import dict_otklik
-from src.gpt.gpt import gpt
+
 #from constants.texts import answer1
 #from configuration.read_strings_from_file import read_strings_from_file
 #from pyperclip import copy, paste
@@ -43,7 +50,7 @@ def filling_the_card(driver: Safari, id: str, all_text:str, w3: WebScraper, all_
             if text_gpt is None:
                 raise Exception("Не удалось получить текст от gpt")
                 #return False                                                                #!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            pik()
+            #pik()
             sleep(2)
             driver.execute_script("arguments[0].value = arguments[1];", texteria, text_gpt)
             
