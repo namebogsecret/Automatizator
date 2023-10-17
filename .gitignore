@@ -41,3 +41,6 @@ files_
 answers
 .env
 *.sqlc
+dump_schema.sql
+cookies.txt
+*.csv

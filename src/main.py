@@ -9,7 +9,8 @@ else:
 sys.path.append(src_path)"""
 from configuration.read_strings_from_file import read_strings_from_file
 
-from sys import exit as sys_exit
+import sys
+import os
 from datetime import datetime, timedelta
 from random import randint
 from threading import Thread
@@ -48,73 +49,51 @@ import json
 
 from stata.get_ostalos import get_ostalos
 #from memory_profiler import profile
+from clock.timer import timer
+from dialog.getting_chats_info import geting_chats_info
+from constants.time_container import time_container
+DIALOGS = True
 
 logger = getLogger(__name__)
 logger = set_logger(logger)
-last_time_otklik = time()
+#last_time_otklik = time()
 read_dictionaries_from_file('src/configuration/dictionaries_old.json')
 strings_dict = read_strings_from_file()
 cards_at_a_time = int(strings_dict["cards_at_a_time"])
 scrolls = int(strings_dict["scrolls"])
 url2 = strings_dict["second_url"]
-
+if DIALOGS:
+    scrolls = 0
 form_width = 225
 form_height = 345
-start_time = datetime.now()
-logger.info("Запуск программы в %s", start_time)
+#start_time = datetime.now()
+logger.info("Запуск программы в %s", time_container.start_time)
 #cards_at_a_time = 20
 #scrolls = 2
 
-
-
-#@profile
-def timer():
-    bots3 = TelegramBots(3)
-    sleep(30)
-    times = 0
-    while not flag.stop:
-        times += 1
-        sleep(10)
-        time_passed = datetime.now() - start_time
-        #logger.info("Прошло %s секунд с момента запуска программы",
-        # time_passed.seconds)
-        #app.time_from_start["text"] = str(strftime( "%H:%M:%S",
-        # gmtime(time_passed.seconds)))
-
-        if times >= 6:
-            try:
-                # Вычисляем разницу во времени
-                time_from_otklik = time() - last_time_otklik
-                time_delta = timedelta(seconds=time_from_otklik)
-                formatted_time = str(time_delta).split('.')[0]
-                bots3.to_developer(f"С обновления прошло: {formatted_time}")
-                logger.info(f"С обновления прошло: {formatted_time}")
-                if time_from_otklik > 60 * 10: #10 минут
-                    logger.error(f"Слишком долго не обновлялись карточки {formatted_time}")
-                    bots3.rassilka(f"Слишком долго не обновлялись карточки  {formatted_time}, возможно требуется внимание", False)
-                    if time_from_otklik > 60 * 15: # 
-                        logger.error(f"Слишком долго не обновлялись карточки {formatted_time} - Перезапуск")
-                        bots3.rassilka(f"Слишком долго не обновлялись карточки  {formatted_time} - Перезапуск", False)
-                        sys_exit("Error: too long not updating, trying to restart the bot")
-                del time_from_otklik, formatted_time, time_delta
-                times = 0
-            except Exception as e:
-                logger.error(e)
-                logger.error("Не удалось отправить сообщение в телеграмм")
-                times = 0
-        del time_passed
 #@profile
 def main_loop():
-    global last_time_otklik
+    global time_container
     bots1 = TelegramBots(1)
     bots2 = TelegramBots(2)
-    bots1.to_all_mine("Запустился бот %s" % start_time.strftime("%d.%m.%Y %H:%M:%S"),
+    bots1.to_all_mine(f'Запустился бот {time_container.start_time.strftime("%d.%m.%Y %H:%M:%S")}',
                       False)
 
     sleep(5)
     logger.info("Запуск главного цикла")
     #app.state_label["text"] = "State: Preparing page..."
     driver, x_coordinata = prepare_page(scrolls)
+    if DIALOGS:
+        try:
+            statuses = geting_chats_info(driver)
+            #print(statuses)
+            #print(len(statuses))
+            for m_id, status, message in statuses:
+                print(f"{m_id} {status} {message}")
+        except Exception as e:
+            logger.error(e)
+            logger.error("Не удалось получить информацию о чатах")
+        os._exit(0)
     #root.geometry(f"+{int(x_coordinata)}+{int(0)}")
     #Сделать перелогинивание!!!!!
     ciklov = 0
@@ -205,7 +184,7 @@ def main_loop():
                 except Exception as e:
                     logger.error(f"Ошибка получения осталось: {e}")
                 bots2.to_developer(f"""Цикл: {str(ciklov)} \nОткликов: {str(otklikov)} \nВакансий: {str(vakansiy)} \nУдаленных: {str(deleted)} \nОшибок: {str(errors)}  \nНеподходящих: {str(nepodhodit)} \nЗабаненных: {str(banned)} \nЛимитов: {str(limited)} \nВремя: {str(datetime.now().strftime('%H:%M:%S'))}\nОсталось: {str(ostalos_otklikov)}""")
-                last_time_otklik = time()
+                time_container.update_last_time_otklik()
             else:
                 logger.error("Нет новых карточек none ")
                 some_errors += 1
@@ -226,7 +205,7 @@ def main_loop():
                 logger.error("Слишком много критических ошибок")
                 bots1.rassilka("""3 критических ошибки, пробуем перезапустить бота""")
                 # Завершение программы
-                sys_exit("Error: too many critical errors, trying to restart the bot")
+                os._exit(0)
 
         logger.info(f"-----идет цикл {ciklov} ------")
         timer_stop = time()
@@ -327,7 +306,7 @@ def main_loop():
     
     #app.state_label["text"] = "State: Closing driver..."
     driver.close()
-    bots1.to_all_mine("Бот выключается %s" % start_time.strftime("%d.%m.%Y %H:%M:%S"),
+    bots1.to_all_mine(f'Бот выключается {time_container.start_time.strftime("%d.%m.%Y %H:%M:%S")}',
                       False)
 
 
@@ -375,8 +354,8 @@ logger.info("Завершение работы программы")
 
 
 try:
-    sys_exit("Error: exiting the program")
     close_log_files()
+    os._exit(0)
     #root.destroy()
 except Exception as e:
     logger.info(f"Завершение жестко {e}")

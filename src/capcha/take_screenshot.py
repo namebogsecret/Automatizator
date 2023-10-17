@@ -11,6 +11,7 @@ logger = getLogger(__name__)
 logger = set_logger(logger)
 
 def take_screenshot(element, name = 'screenshot'):
+    
     logger.info(" Скриншот капчи")
 
     #location = element.location
