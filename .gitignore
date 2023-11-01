@@ -49,4 +49,6 @@ files
 migrate
 .env
 repetitors.sqlc
-capcha
+captcha
+.gitignore copy
+test_*.py

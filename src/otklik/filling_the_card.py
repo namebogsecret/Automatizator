@@ -25,60 +25,60 @@ pyautogui.hotkey('command', 'v')"""
 logger = getLogger(__name__)
 logger = set_logger(logger)
 
+# Кастомное исключение для GPT
+class GPTException(Exception):
+    pass
+
+def fill_text_field(id, texteria, text_gpt, driver):
+    try:
+        driver.execute_script("arguments[0].value = arguments[1];", texteria, text_gpt)
+        sleep(5)
+        texteria.send_keys(" ")
+        logger.info(f"Отклик заполнен gpt на карточке {id}")
+        return True
+    except Exception as e:
+        logger.warning(f"Не удалось вставить текст от GPT: {e}")
+        return False
+
+def process_card(id, w3, all_text, all_text_to_gpt_with_numbers, sql, driver):
+    texteria = w3.is_it_on_the_page("textarea")
+    if not texteria:
+        logger.error(f"Не найден элемент textarea на карточке {id}")
+        return False
+
+    try:
+        text_gpt = gpt(all_text, id, all_text_to_gpt_with_numbers, timeout=240, sql=sql)
+        if text_gpt is None:
+            raise GPTException("Не удалось получить текст от GPT")
+        
+        if fill_text_field(id, texteria, text_gpt, driver):
+            return True
+
+    except (GPTException, Exception) as e:
+        logger.warning(f"Не удалось получить текст от GPT на карточке {id}. Ошибка: {e}")
+
+    # Процесс автоотклика, если GPT не сработал
+    avtootklik = w3.is_it_on_the_page("first_avtootklik")
+    if avtootklik:
+        try:
+            click(avtootklik, driver, buttomtype="otklik1")
+            logger.info(f"Выбран автоотклик на карточке {id}")
+            return True
+        except Exception as e:
+            logger.warning(f"Не удалось выбрать автоотклик на карточке {id}. Ошибка: {e}")
+
+    logger.error(f"Не удалось обработать карточку {id}")
+    return False
+
+
 def filling_the_card(driver: Safari, id: str, all_text:str, w3: WebScraper, all_text_to_gpt_with_numbers, sql) -> bool:    
 
     logger.info("Заполнение формы отклика на карточке %s", id)
     # textarea заполняется через js
     actions = ActionChains(driver)
-    
-    
-    #logger.error("Не удалось найти автоотклик на карточке %s", id)
-    texteria = w3.is_it_on_the_page("textarea")
-    if texteria:
-        text_gpt = ""
-        
-        try:
-            text_gpt = gpt(all_text, id,all_text_to_gpt_with_numbers, timeout=240, sql = sql)
-            #text_gpt =chouse_avtootklik_text("text")
-            if text_gpt is None:
-                raise Exception("Не удалось получить текст от gpt")
-                #return False                                                                #!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            pik()
-            sleep(2)
-            driver.execute_script("arguments[0].value = arguments[1];", texteria, text_gpt)
-            
-            sleep(2)
-            texteria.send_keys(" ")
-            logger.info("Отклик заполнен gpt на карточке %s", id)
-        except Exception as e:
-            avtootklik = w3.is_it_on_the_page("first_avtootklik")
-            logger.warning("Не удалось получить текст от gpt на карточке %s Error %s", id, e)
-            if avtootklik:
-                try:
-                    driver.execute_script("arguments[0].focus();", avtootklik)
-                    sleep(0.2)
-                    click(avtootklik, driver, buttomtype="otklik1")
-                    #actions.move_to_element(avtootklik).perform()
-                    #avtootklik.send_keys(Keys.RETURN)
-                    #avtootklik.click()
-                    logger.info("Выбран автоотклик на карточке %s", id)
-                except Exception as e:
-                    logger.warning("Не удалось выбрать автоотклик на карточке %s Error %s", id, e)
-                    try:
-                        texteria.send_keys(chouse_avtootklik_text("text"))
-                        logger.info("Отклик заполнен через js на карточке %s", id)
-                    except Exception as e:
-                        logger.error("Не удалось найти автоотклик на карточке%s", id)
-                        return False
-            else:
-                try:
-                    texteria.send_keys(chouse_avtootklik_text("text"))
-                    logger.info("Отклик заполнен через js на карточке %s", id)
-                except Exception as _:
-                    logger.error("Не удалось найти автоотклик на карточке%s", id)
-                    return False
 
-    
+    if not process_card(id, w3, all_text, all_text_to_gpt_with_numbers, sql, driver):
+        return False
     
     sleep(0.5 + random())
     logger.info("Выбор цены на карточке %s", id)

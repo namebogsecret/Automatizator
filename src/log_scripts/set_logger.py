@@ -9,6 +9,24 @@ from time import time
 
 logs_dir = 'logs'
 
+# Создание или получение логгера
+fallback_logger = logging.getLogger('fallback')
+
+# Установка уровня логирования
+fallback_logger.setLevel(logging.ERROR)
+
+# Создание обработчика, который выводит сообщения в stdout
+fallback_handler = logging.StreamHandler()
+
+# Добавление обработчика к логгеру
+fallback_logger.addHandler(fallback_handler)
+
+# (Опционально) Установка форматтера для обработчика
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fallback_handler.setFormatter(formatter)
+
+
+
 def archive_large_logs(logs_dir, max_size_mb=10):
     """
     Архивирует большие лог-файлы в указанной директории.
@@ -20,39 +38,41 @@ def archive_large_logs(logs_dir, max_size_mb=10):
     Примеры использования:
     >>> archive_large_logs('/path/to/logs', 5)
     """
-    
-    # Преобразование мегабайт в байты
-    max_size_bytes = max_size_mb * 1024 * 1024  
-    
-    # Проход по всем файлам и папкам в директории
-    for root, dirs, files in walk(logs_dir):
-        for file in files:
-            # Проверяем, что файл является логом
-            if not file.endswith('.log'):  
-                continue
-            
-            file_path = join(root, file)
-            
-            # Проверка размера файла
-            if getsize(file_path) > max_size_bytes:
-                archive_dir = join(root, 'archive')
+    try:
+        # Преобразование мегабайт в байты
+        max_size_bytes = max_size_mb * 1024 * 1024  
+        
+        # Проход по всем файлам и папкам в директории
+        for root, dirs, files in walk(logs_dir):
+            for file in files:
+                # Проверяем, что файл является логом
+                if not file.endswith('.log'):  
+                    continue
                 
-                # Создание папки 'archive', если она не существует
-                if not exists(archive_dir):
-                    makedirs(archive_dir)
+                file_path = join(root, file)
                 
-                # Извлечение даты из имени файла
-                file_date_str = file.split('_')[0]  
-                
-                # Формирование имени архивного файла
-                archive_file = join(archive_dir, f'{file_date_str}_{int(time())}_large.zip')
-                
-                # Архивирование, если такого архива еще нет
-                if not exists(archive_file):
-                    make_archive(join(archive_dir, f'{file_date_str}_{int(time())}_large'), 'zip', root, file)
-                
-                # Удаление исходного файла после архивации
-                remove(file_path)  
+                # Проверка размера файла
+                if getsize(file_path) > max_size_bytes:
+                    archive_dir = join(root, 'archive')
+                    
+                    # Создание папки 'archive', если она не существует
+                    if not exists(archive_dir):
+                        makedirs(archive_dir)
+                    
+                    # Извлечение даты из имени файла
+                    file_date_str = file.split('_')[0]  
+                    
+                    # Формирование имени архивного файла
+                    archive_file = join(archive_dir, f'{file_date_str}_{int(time())}_large.zip')
+                    
+                    # Архивирование, если такого архива еще нет
+                    if not exists(archive_file):
+                        make_archive(join(archive_dir, f'{file_date_str}_{int(time())}_large'), 'zip', root, file)
+                    
+                    # Удаление исходного файла после архивации
+                    remove(file_path)
+    except Exception as e:
+        fallback_logger.error(f"Ошибка при архивации больших логов: {e}")
 
 
 def archive_old_logs(logs_dir):
@@ -65,39 +85,40 @@ def archive_old_logs(logs_dir):
     Примеры использования:
     >>> archive_old_logs('/path/to/logs')
     """
-    
-    # Получение текущей даты
-    today = datetime.now().date()
-    
-    # Проход по всем файлам и папкам в директории
-    for root, dirs, files in walk(logs_dir):
-        for file in files:
-            # Проверяем, что файл является логом
-            if not file.endswith('.log'):
-                continue
-            
-            # Извлечение даты из имени файла
-            file_date_str = file.split('_')[0]
-            file_date = datetime.strptime(file_date_str, "%Y-%m-%d").date()
-            
-            # Проверка, является ли файл устаревшим
-            if file_date < today:
-                archive_dir = join(root, 'archive')
+    try:
+        # Получение текущей даты
+        today = datetime.now().date()
+        
+        # Проход по всем файлам и папкам в директории
+        for root, dirs, files in walk(logs_dir):
+            for file in files:
+                # Проверяем, что файл является логом
+                if not file.endswith('.log'):
+                    continue
                 
-                # Создание папки 'archive', если она не существует
-                if not exists(archive_dir):
-                    makedirs(archive_dir)
+                # Извлечение даты из имени файла
+                file_date_str = file.split('_')[0]
+                file_date = datetime.strptime(file_date_str, "%Y-%m-%d").date()
                 
-                # Формирование имени архивного файла
-                archive_file = join(archive_dir, f'{file_date_str}.zip')
-                
-                # Архивирование, если такого архива еще нет
-                if not exists(archive_file):
-                    make_archive(join(archive_dir, file_date_str), 'zip', root, file)
-                
-                # Удаление исходного файла после архивации
-                remove(join(root, file))
-
+                # Проверка, является ли файл устаревшим
+                if file_date < today:
+                    archive_dir = join(root, 'archive')
+                    
+                    # Создание папки 'archive', если она не существует
+                    if not exists(archive_dir):
+                        makedirs(archive_dir)
+                    
+                    # Формирование имени архивного файла
+                    archive_file = join(archive_dir, f'{file_date_str}.zip')
+                    
+                    # Архивирование, если такого архива еще нет
+                    if not exists(archive_file):
+                        make_archive(join(archive_dir, file_date_str), 'zip', root, file)
+                    
+                    # Удаление исходного файла после архивации
+                    remove(join(root, file))
+    except Exception as e:
+        fallback_logger.error(f"Ошибка при архивации устаревших логов: {e}")
 
 if not exists(logs_dir):
     mkdir(logs_dir)
@@ -114,10 +135,13 @@ def create_handler(log_dir, level, formatter):
     Возвращает:
     - logging.Handler: Настроенный обработчик.
     """
-    handler = logging.FileHandler(join(log_dir, f'{datetime.now().strftime("%Y-%m-%d")}_{level}.log'))
-    handler.setLevel(logging.getLevelName(level.upper()))
-    handler.setFormatter(formatter)
-    return handler
+    try:
+        handler = logging.FileHandler(join(log_dir, f'{datetime.now().strftime("%Y-%m-%d")}_{level}.log'))
+        handler.setLevel(logging.getLevelName(level.upper()))
+        handler.setFormatter(formatter)
+        return handler
+    except Exception as e:
+        fallback_logger.error(f"Ошибка при создании обработчика: {e}")
 
 def set_logger_(logger, logs_dir):
     """
@@ -130,90 +154,95 @@ def set_logger_(logger, logs_dir):
     Возвращает:
     - logging.Logger: Настроенный логгер.
     """
-    
-    component_name = logger.name
-    logger.setLevel(logging.DEBUG)
-    
-    # Архивация старых и больших лог-файлов
-    archive_old_logs(logs_dir)
-    archive_large_logs(logs_dir)
-    
-    # Формат сообщений для логгера
-    formatter = logging.Formatter('%(levelname)s:%(asctime)s:%(name)s:%(message)s')
-    
-    # Создание и настройка обработчиков для различных уровней логгирования
-    levels = ['all', 'debug', 'info', 'warning', 'error', 'critical']
-    for level in levels:
-        handler = create_handler(join(logs_dir, level), level, formatter)
-        logger.addHandler(handler)
-    
-    # Создание директории для компонента, если не существует
-    log_components_dir = join(logs_dir, 'components', component_name)
-    if not exists(log_components_dir):
-        mkdir(log_components_dir)
+    try:
+        component_name = logger.name
+        logger.setLevel(logging.DEBUG)
         
-    # Создание и настройка обработчика для компонента
-    file_handler_component = create_handler(log_components_dir, 'all', formatter)
-    logger.addHandler(file_handler_component)
-    
-    return logger
+        # Архивация старых и больших лог-файлов
+        archive_old_logs(logs_dir)
+        archive_large_logs(logs_dir)
+        
+        # Формат сообщений для логгера
+        formatter = logging.Formatter('%(levelname)s:%(asctime)s:%(name)s:%(message)s')
+        
+        # Создание и настройка обработчиков для различных уровней логгирования
+        levels = ['all', 'debug', 'info', 'warning', 'error', 'critical']
+        for level in levels:
+            handler = create_handler(join(logs_dir, level), level, formatter)
+            logger.addHandler(handler)
+        
+        # Создание директории для компонента, если не существует
+        log_components_dir = join(logs_dir, 'components', component_name)
+        if not exists(log_components_dir):
+            mkdir(log_components_dir)
+            
+        # Создание и настройка обработчика для компонента
+        file_handler_component = create_handler(log_components_dir, 'all', formatter)
+        logger.addHandler(file_handler_component)
+        
+        return logger
+    except Exception as e:
+        fallback_logger.error(f"Ошибка при настройке логгера1: {e}")
 
 def set_logger(logger):
-    component_name = logger.name
-    logger.setLevel(logging.DEBUG)
-    # Вызовите эту функцию перед созданием новых файлов логов:
-    archive_old_logs(logs_dir)
-    archive_large_logs(logs_dir)
-    # Форматирование сообщений лога
-    formatter = logging.Formatter('%(levelname)s:%(asctime)s:%(name)s:%(message)s')
+    try:
+        component_name = logger.name
+        logger.setLevel(logging.DEBUG)
+        # Вызовите эту функцию перед созданием новых файлов логов:
+        archive_old_logs(logs_dir)
+        archive_large_logs(logs_dir)
+        # Форматирование сообщений лога
+        formatter = logging.Formatter('%(levelname)s:%(asctime)s:%(name)s:%(message)s')
 
-    """# Создание обработчика для вывода сообщений в консоль
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.WARNING)
+        """# Создание обработчика для вывода сообщений в консоль
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.WARNING)
 
-    console_handler.setFormatter(formatter)"""
+        console_handler.setFormatter(formatter)"""
 
-    # Добавление обработчика к логгеру
-    #logger.addHandler(console_handler)
+        # Добавление обработчика к логгеру
+        #logger.addHandler(console_handler)
 
-    
-    # Общий файл лога
-    file_handler_all = logging.FileHandler(join(logs_dir,'all', f'{datetime.now().strftime("%Y-%m-%d")}_app_all.log'))
-    file_handler_all.setFormatter(formatter)
-    logger.addHandler(file_handler_all)
+        
+        # Общий файл лога
+        file_handler_all = logging.FileHandler(join(logs_dir,'all', f'{datetime.now().strftime("%Y-%m-%d")}_app_all.log'))
+        file_handler_all.setFormatter(formatter)
+        logger.addHandler(file_handler_all)
 
-    # Файлы лога по уровням сообщений
-    debug_handler = logging.FileHandler(join(logs_dir, 'debug', f'{datetime.now().strftime("%Y-%m-%d")}_debug.log'))
-    debug_handler.setLevel(logging.DEBUG)
-    debug_handler.setFormatter(formatter)
-    logger.addHandler(debug_handler)
+        # Файлы лога по уровням сообщений
+        debug_handler = logging.FileHandler(join(logs_dir, 'debug', f'{datetime.now().strftime("%Y-%m-%d")}_debug.log'))
+        debug_handler.setLevel(logging.DEBUG)
+        debug_handler.setFormatter(formatter)
+        logger.addHandler(debug_handler)
 
-    info_handler = logging.FileHandler(join(logs_dir, 'info', f'{datetime.now().strftime("%Y-%m-%d")}_info.log'))
-    info_handler.setLevel(logging.INFO)
-    info_handler.setFormatter(formatter)
-    logger.addHandler(info_handler)
+        info_handler = logging.FileHandler(join(logs_dir, 'info', f'{datetime.now().strftime("%Y-%m-%d")}_info.log'))
+        info_handler.setLevel(logging.INFO)
+        info_handler.setFormatter(formatter)
+        logger.addHandler(info_handler)
 
-    warning_handler = logging.FileHandler(join(logs_dir, 'warning', f'{datetime.now().strftime("%Y-%m-%d")}_warning.log'))
-    warning_handler.setLevel(logging.WARNING)
-    warning_handler.setFormatter(formatter)
-    logger.addHandler(warning_handler)
+        warning_handler = logging.FileHandler(join(logs_dir, 'warning', f'{datetime.now().strftime("%Y-%m-%d")}_warning.log'))
+        warning_handler.setLevel(logging.WARNING)
+        warning_handler.setFormatter(formatter)
+        logger.addHandler(warning_handler)
 
-    error_handler = logging.FileHandler(join(logs_dir, 'error', f'{datetime.now().strftime("%Y-%m-%d")}_error.log'))
-    error_handler.setLevel(logging.ERROR)
-    error_handler.setFormatter(formatter)
-    logger.addHandler(error_handler)
+        error_handler = logging.FileHandler(join(logs_dir, 'error', f'{datetime.now().strftime("%Y-%m-%d")}_error.log'))
+        error_handler.setLevel(logging.ERROR)
+        error_handler.setFormatter(formatter)
+        logger.addHandler(error_handler)
 
-    critical_handler = logging.FileHandler(join(logs_dir, 'critical', f'{datetime.now().strftime("%Y-%m-%d")}_critical.log'))
-    critical_handler.setLevel(logging.CRITICAL)
-    critical_handler.setFormatter(formatter)
-    logger.addHandler(critical_handler)
+        critical_handler = logging.FileHandler(join(logs_dir, 'critical', f'{datetime.now().strftime("%Y-%m-%d")}_critical.log'))
+        critical_handler.setLevel(logging.CRITICAL)
+        critical_handler.setFormatter(formatter)
+        logger.addHandler(critical_handler)
 
-    log_components_dir = join(logs_dir, 'components', component_name)
-    if not exists(log_components_dir):
-        mkdir(log_components_dir)
-    # Файлы лога для каждого компонента
-    file_handler_component = logging.FileHandler(join(log_components_dir, f'{datetime.now().strftime("%Y-%m-%d")}_{component_name}_all.log'))
-    file_handler_component.setFormatter(formatter)
-    logger.addHandler(file_handler_component)
+        log_components_dir = join(logs_dir, 'components', component_name)
+        if not exists(log_components_dir):
+            mkdir(log_components_dir)
+        # Файлы лога для каждого компонента
+        file_handler_component = logging.FileHandler(join(log_components_dir, f'{datetime.now().strftime("%Y-%m-%d")}_{component_name}_all.log'))
+        file_handler_component.setFormatter(formatter)
+        logger.addHandler(file_handler_component)
 
-    return logger
+        return logger
+    except Exception as e:
+        fallback_logger.error(f"Ошибка при настройке логгера2: {e}")
