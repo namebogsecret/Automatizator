@@ -5,7 +5,7 @@ from os import getenv
 from icecream import ic
 import openai
 from dotenv import load_dotenv
-from get_application import get_application
+from gpt.get_application import get_application
 from time import time
 
 def get_user_data(all_text:str) -> json:
