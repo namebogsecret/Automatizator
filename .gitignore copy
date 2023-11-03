@@ -1,0 +1,59 @@
+# Файлы с различными расширениями
+*.png
+*.html
+*.log
+*.zip
+*.pyc
+*.sql
+*.db
+*.env
+
+# Конкретные файлы
+main
+geckodriver
+client.ovpn
+chromedriver
+._main
+._geckodriver
+._files_
+._client.ovpn
+._chromedriver
+._src_
+cookies_.txt
+cookies.txt
+src/main.py.save
+src/capcha/.env
+src/configuration/api.txt
+src/configuration/strings.txt
+dump.sql
+repetitors.sqlc
+src/.DS_Store
+src/configuration/dictionaries_old copy 2.json
+src/configuration/dictionaries_old copy.json
+src/main_nocapcha
+
+# Директории и их содержимое
+.vscode/
+logs/
+src_/
+venv/
+*/__pycache__/
+src/build/
+files_/
+files/
+answers/
+src_
+
+# Прочие игнорируемые элементы
+captcha
+repetitors.db
+cookies.txt
+sqlite3_analyzer
+venv
+files_
+.vscode
+answers
+logs
+files
+migrate
+.env
