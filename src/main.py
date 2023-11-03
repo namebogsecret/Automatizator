@@ -20,6 +20,7 @@ from constants.pathes import db_path
 from otklik.last_cards_chek import last_cards_check
 from parsing_cards.update_all_cards import CardUpdater
 from logging import getLogger
+import log_scripts.set_logger
 from log_scripts.set_logger import set_logger
 from log_scripts.set_logger import logs_dir, archive_large_logs, archive_old_logs
 from webdriver.prepare_page import prepare_page
@@ -95,19 +96,19 @@ def timer():
                 time_delta = timedelta(seconds=time_from_otklik)
                 formatted_time = str(time_delta).split('.')[0]
                 bots3.to_developer(f"С обновления прошло: {formatted_time}")
-                logger.info(f"С обновления прошло: {formatted_time}")
-                if time_from_otklik > time_for_otklik * 3: #10 минут
-                    logger.error(f"Слишком долго не обновлялись карточки {formatted_time}")
+                #logger.info(f"С обновления прошло: {formatted_time}")
+                if time_from_otklik > time_for_otklik * 5: #10 минут
+                    #logger.error(f"Слишком долго не обновлялись карточки {formatted_time}")
                     bots3.rassilka(f"Слишком долго не обновлялись карточки  {formatted_time}, возможно требуется внимание", False)
-                    if time_from_otklik > time_for_otklik * 5: # 
-                        logger.error(f"Слишком долго не обновлялись карточки {formatted_time} - Перезапуск")
+                    if time_from_otklik > time_for_otklik * 7: # 
+                        #logger.error(f"Слишком долго не обновлялись карточки {formatted_time} - Перезапуск")
                         bots3.rassilka(f"Слишком долго не обновлялись карточки  {formatted_time} - Перезапуск", False)
                         sys_exit("Error: too long not updating, trying to restart the bot")
                 del time_from_otklik, formatted_time, time_delta
                 times = 0
             except Exception as e:
-                logger.error(e)
-                logger.error("Не удалось отправить сообщение в телеграмм")
+                #logger.error(e)
+                #logger.error("Не удалось отправить сообщение в телеграмм")
                 times = 0
         del time_passed
 #@profile
@@ -230,6 +231,8 @@ def main_loop():
             some_errors += 1
             #app.state_label["text"] = "State: Error while working with cards..."
             logger.error("Не удалось обновить карточки")
+            driver.close()
+            driver, x_coordinata = prepare_page(0) 
         if some_errors > 5:
             logger.error("Слишком много ошибок")
             bots1.rassilka("""Больше 5 ошибок, возможно требуется внимание""")
