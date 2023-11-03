@@ -58,18 +58,19 @@ def process_card(id, w3, all_text, all_text_to_gpt_with_numbers, sql, driver):
     except (GPTException, Exception) as e:
         logger.warning(f"Не удалось получить текст от GPT на карточке {id}. Ошибка: {e}")
 
-    # Процесс автоотклика, если GPT не сработал
-    avtootklik = w3.is_it_on_the_page("first_avtootklik")
-    if avtootklik:
-        try:
-            click(avtootklik, driver, buttomtype="otklik1")
-            logger.info(f"Выбран автоотклик на карточке {id}")
-            return True, naputstvie
-        except Exception as e:
-            logger.warning(f"Не удалось выбрать автоотклик на карточке {id}. Ошибка: {e}")
+        # Процесс автоотклика, если GPT не сработал
+        avtootklik = w3.is_it_on_the_page("first_avtootklik")
+        if avtootklik:
+            try:
+                texteria.clear()
+                click(avtootklik, driver, buttomtype="otklik1")
+                logger.info(f"Выбран автоотклик на карточке {id}")
+                return True, naputstvie
+            except Exception as e:
+                logger.warning(f"Не удалось выбрать автоотклик на карточке {id}. Ошибка: {e}")
 
-    logger.error(f"Не удалось обработать карточку {id}")
-    return False, naputstvie
+        logger.error(f"Не удалось обработать карточку {id}")
+        return False, naputstvie
 
 
 def filling_the_card(driver: Safari, id: str, all_text:str, w3: WebScraper, all_text_to_gpt_with_numbers, sql) -> bool:    
