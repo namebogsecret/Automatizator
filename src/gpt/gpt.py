@@ -24,7 +24,7 @@ from gpt.get_application import get_application
 def gpt(html_about:str, id: str, all_text_to_gpt_with_numbers:str, witch:int = 1, gpt4: bool = True,  temp: float = 2/10, timeout=240, sql = None):
     temp = randint(1,9)/10
     api_key = get_api()
-    client4 = GPTClient(api_key, "gpt-4")
+    client4 = GPTClient(api_key, "gpt-4") #gpt-4 "gpt-4-1106-preview"
     client3 = GPTClient(api_key)
     client3_temp = 2/10
     if gpt4:

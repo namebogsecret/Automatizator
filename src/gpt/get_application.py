@@ -13,7 +13,7 @@ def get_application(user_info: json, middle_text: str, whant_distant: bool = Fal
 
     openai.api_key = getenv("gpt_api")
 
-    model = "gpt-4" # "gpt-4", #"gpt-3.5-turbo",
+    model = "gpt-4" # "gpt-4", #"gpt-3.5-turbo","gpt-4-1106-preview"
 
     # temperature = 0.1
 

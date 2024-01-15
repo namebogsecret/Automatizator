@@ -13,7 +13,7 @@ def get_user_data(all_text:str) -> json:
 
     openai.api_key = getenv("gpt_api")
 
-    model = "gpt-3.5-turbo" # "gpt-4", #"gpt-3.5-turbo",
+    model = "gpt-3.5-turbo" # "gpt-4", #"gpt-3.5-turbo","gpt-4-1106-preview"
 
     temperature = 0.1
 

@@ -1,6 +1,6 @@
 from requests import post
 class GPTClient:
-    def __init__(self, api_key, model="gpt-3.5-turbo"):
+    def __init__(self, api_key, model="gpt-3.5-turbo-1106"):
         self.api_key = api_key
         self.model = model
 

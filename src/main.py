@@ -219,6 +219,8 @@ def main_loop():
                         logger.error(f"Ошибка получения осталось: {e}")
                 
                 bots2.to_developer(f"""Цикл: {str(ciklov)} \nОткликов: {str(otklikov)} \nВакансий: {str(vakansiy)} \nУдаленных: {str(deleted)} \nОшибок: {str(errors)}  \nНеподходящих: {str(nepodhodit)} \nЗабаненных: {str(banned)} \nЛимитов: {str(limited)} \nВремя: {str(datetime.now().strftime('%H:%M:%S'))}\nОсталось: {str(ostalos_otklikov)}""")
+                with open ("last_update.txt", "w") as file:
+                    file.write(str(datetime.now()))
                 last_time_otklik = time()
             else:
                 logger.error("Нет новых карточек none ")

@@ -52,3 +52,6 @@ repetitors.sqlc
 captcha
 .gitignore copy
 test_*.py
+last_update.txt
+n.php
+cookies.txt
