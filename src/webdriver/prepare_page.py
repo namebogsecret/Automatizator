@@ -71,16 +71,22 @@ def prepare_page(scrolldown: int = 5):
         chrome_options.add_argument("--disable-dev-shm-usage")
         #chrome_driver_path = "/usr/local/bin/chromedriver"
         chrome_options.binary_location = "/usr/bin/google-chrome"
+        # Настройка логирования
+        service = Service("/root/Automatizator/chromedriver")
+        service.log_path = 'chromedriver.log'  # Указываем файл для логов
+        service.enable_verbose_logging = True  # Включаем подробное логирование
 
         chrome_driver_path = "/usr/local/bin/chromedriver"
         logger.info("Инициализация драйвера Selenium, используя браузер Chrome")
-        driver = Chrome(options=chrome_options)
+        driver = Chrome(service=service, options=chrome_options)
+        driver.set_page_load_timeout(600)
     elif my_driver == "safari":
         # Задаем уникальный идентификатор окна Safari
         options = SafariOptions()
         #options.set_capability('safari.initialUrl', 'profi_fucker')
         options = set_option(options)
         driver = Safari(options=options)
+        driver.set_page_load_timeout(600)
     else:
         if my_driver != "firefox":
             logger.warning("Драйвер не найден, пробуем firefox")
@@ -88,6 +94,7 @@ def prepare_page(scrolldown: int = 5):
         options = set_option(options)
         #gecko_driver_path = "/Volumes/Untitled/Automatizator/geckodriver"
         driver = Firefox(options=options)
+        driver.set_page_load_timeout(600)
 
     #driver.implicitly_wait(10)
     # Получение высоты экрана

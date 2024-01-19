@@ -69,7 +69,8 @@ logger.info("Запуск программы в %s", start_time)
 
 poluchat_li_ostalos = int(strings_dict["poluchat_li_ostalos"])
 
-
+with open ("last_update.txt", "w") as file:
+    file.write(str(datetime.now()))
 CAPTCHA_IS_SOLVED = False
 #@profile
 def timer():
@@ -112,6 +113,43 @@ def timer():
                 times = 0
         del time_passed
 #@profile
+
+class driver_manager():
+    def __init__(self, scrolls):
+        self._set_driver(scrolls)
+        self.scrolls = scrolls
+    
+    def check(self):
+        try:
+            self.driver.title
+            return True
+        except:
+            return False
+    
+    def get_driver(self, scrols = 2):
+        if self.check():
+            return self.driver
+        else:
+            return self._set_driver(scrols)
+
+    def _set_driver(self, scrolls):
+        self.driver, _ = prepare_page(scrolls)
+        if self.check():
+            return self.driver
+        else:
+            return None
+
+    def reset(self,scrolls):
+        self.delete()
+        return self._set_driver(scrolls)
+    
+    def delete(self):
+        try:
+            self.driver.close()
+        except Exception:
+            pass
+        self.driver = None
+
 def main_loop():
     global last_time_otklik
     global scrolls
@@ -125,7 +163,8 @@ def main_loop():
     sleep(30+randint(-10, 10))
     logger.info("Запуск главного цикла")
     #app.state_label["text"] = "State: Preparing page..."
-    driver, x_coordinata = prepare_page(scrolls)
+    my_driver_manager = driver_manager(scrolls)
+    driver = my_driver_manager.get_driver()
     #root.geometry(f"+{int(x_coordinata)}+{int(0)}")
     #Сделать перелогинивание!!!!!
     ciklov = 0
@@ -149,7 +188,7 @@ def main_loop():
         try:
 
             if 0 <= datetime.now().minute <= 5:
-                ostalos = get_ostalos(driver)
+                ostalos = get_ostalos(my_driver_manager.get_driver())
                 sleep(20+randint(-5, 5))
                 if not ostalos:
                     logger.error("Не удалось получить осталось")
@@ -173,7 +212,7 @@ def main_loop():
             logger.error("Не удалось подключиться к базе данных")
             return None
         
-        cardupdater = CardUpdater(driver,sql )
+        cardupdater = CardUpdater(my_driver_manager.get_driver(),sql )
         #app.state_label["text"] = "State: trying to work with cards..."
         delta = 0
         delta_otkl = 0
@@ -187,7 +226,7 @@ def main_loop():
                 #app.state_label["text"] = "State: Checking last cards..."
                 logger.info("Проверка последних карточек")
                 o1, v1, d1, e1, n1, b1, l1 = last_cards_check(cards_at_a_time, sql,
-                                                              driver, cards_parsed,
+                                                              my_driver_manager.get_driver(), cards_parsed,
                                                               otklikov, vakansiy,
                                                               deleted, errors,
                                                               nepodhodit, banned,
@@ -209,7 +248,7 @@ def main_loop():
                     #если сейчас время от 0 до 5 минут каждый час, то отправляем статистику
                     try:
                         if 0 <= datetime.now().minute <= 5:
-                            ostalos = get_ostalos(driver)
+                            ostalos = get_ostalos(my_driver_manager.get_driver())
                             sleep(10)
                             if not ostalos:
                                 logger.error("Не удалось получить осталось")
@@ -225,16 +264,14 @@ def main_loop():
             else:
                 logger.error("Нет новых карточек none ")
                 some_errors += 1
-                driver.close()
-                driver, x_coordinata = prepare_page(0) 
+                my_driver_manager.reset()
                 
         except Exception as e:
             logger.error(e)
             some_errors += 1
             #app.state_label["text"] = "State: Error while working with cards..."
             logger.error("Не удалось обновить карточки")
-            driver.close()
-            driver, x_coordinata = prepare_page(0) 
+            my_driver_manager.reset() 
         if some_errors > 5:
             logger.error("Слишком много ошибок")
             bots1.rassilka("""Больше 5 ошибок, возможно требуется внимание""")
@@ -255,15 +292,15 @@ def main_loop():
         proshlo_vremeni = timer_stop - timer_start
         if not flag.stop and delta > 0 and delta_otkl == 0 and proshlo_vremeni < time_for_otklik:
             try:
-                driver.get(url2)
+                my_driver_manager.get_driver().get(url2)
                 strings_dict = read_strings_from_file()
                 scrolls = int(strings_dict["scrolls"])
-                scroll_down(driver, scrolls)
+                scroll_down(my_driver_manager.get_driver(), scrolls)
                 #app.state_label["text"] = "State: Main page opening..."
                 sleep(60 + randint(-20, 20))
-                cardupdater = CardUpdater(driver,sql )
+                cardupdater = CardUpdater(my_driver_manager.get_driver(),sql )
                 cardupdater.update_all_cards()
-                ws = WebScraper(driver, "dict_otklik")
+                ws = WebScraper(my_driver_manager.get_driver(), "dict_otklik")
                 new_messages = ws.is_it_on_the_page("new_messages")
                 if new_messages:
                     number_of_messages = new_messages.text
@@ -309,14 +346,14 @@ def main_loop():
             cards_at_a_time = int(strings_dict["cards_at_a_time"])
             time_for_otklik = int(strings_dict["time_for_otklik"])
             try:
-                driver.get(url2)
+                my_driver_manager.get_driver().get(url2)
                 strings_dict = read_strings_from_file()
                 scrolls = int(strings_dict["scrolls"])
-                scroll_down(driver, scrolls)
+                scroll_down(my_driver_manager.get_driver(), scrolls)
                 #app.state_label["text"] = "State: Main page opening..."
                 sleep(20 + randint(-3, 3))
-                #scroll_down(driver, 2)
-                ws = WebScraper(driver, "dict_otklik")
+                #scroll_down(my_driver_manager.get_driver(), 2)
+                ws = WebScraper(my_driver_manager.get_driver(), "dict_otklik")
                 new_messages = ws.is_it_on_the_page("new_messages")
                 if new_messages:
                     number_of_messages = new_messages.text
@@ -344,7 +381,7 @@ def main_loop():
         logger.info("Сохранение cookies в файл")
         try:
             with open('cookies.txt', 'w') as file:
-                json.dump(driver.get_cookies(), file)
+                json.dump(my_driver_manager.get_driver().get_cookies(), file)
         except Exception as e:
             logger.error(e)
             logger.error("Не удалось сохранить cookies в файл")
@@ -353,7 +390,7 @@ def main_loop():
     # Закрытие экземпляра драйвера
     
     #app.state_label["text"] = "State: Closing driver..."
-    driver.close()
+    my_driver_manager.delete()
     bots1.to_all_mine("Бот выключается %s" % start_time.strftime("%d.%m.%Y %H:%M:%S"),
                       False)
 
