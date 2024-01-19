@@ -46,9 +46,15 @@ from sound.pik import pik
 #from utils.how_many_files import how_many_files
 from configuration.read_dictionaries_from_file import read_dictionaries_from_file
 import json
-
+import os
 from stata.get_ostalos import get_ostalos
 #from memory_profiler import profile
+
+def set_affinity(cores):
+    """ Устанавливает аффинность (привязку) процесса к определенным ядрам. """
+    pid = os.getpid()
+    os.sched_setaffinity(pid, cores)
+set_affinity([1])
 
 logger = getLogger(__name__)
 logger = set_logger(logger)
