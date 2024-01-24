@@ -145,7 +145,7 @@ class driver_manager():
         else:
             return None
 
-    def reset(self,scrolls):
+    def reset(self,scrolls=2):
         self.delete()
         return self._set_driver(scrolls)
     

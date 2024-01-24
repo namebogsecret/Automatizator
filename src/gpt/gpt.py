@@ -63,10 +63,7 @@ temp,
 time() - start_time,
 id,
 sql = sql)
-    return f"""{privetstvie}
-{middle_text}
-{distant_advertasing}
-{proshanie}""", naputstvie
+    return privetstvie, middle_text, distant_advertasing, proshanie, naputstvie
     # request1 = get_request1(witch, user_date, midle_text = midle_text)
     # answer1, time_dur = ask_gpt(client, request1, temp, timeout, id)
     # request2 = get_request2(witch, user_date, midle_text = f"{answer1} \n {midle_text}")

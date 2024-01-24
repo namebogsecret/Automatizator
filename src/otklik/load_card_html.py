@@ -189,7 +189,7 @@ def load_card_html(url, driver, sql) -> tuple:
     html_choose = w3.is_it_on_the_page("otklik_params")
     if html_choose:
         html_choose = html_choose.get_attribute('outerHTML')
-    card_filled, naputstvie = filling_the_card(driver, id, all_text, w3, all_text_to_gpt_with_numbers, sql)
+    card_filled, privetstvie, midle_text, distant_advertasing, proshanie = filling_the_card(driver, id, all_text, w3, all_text_to_gpt_with_numbers, sql)
     if not card_filled:
         logger.error("Не получилось заполнить карточку %s", id)
         return "Error", html, html_choose, html_otklik_param, all_text_to_gpt_with_numbers, ban, limit
@@ -223,25 +223,31 @@ def load_card_html(url, driver, sql) -> tuple:
         if w10.is_it_on_the_page("chat_page"):
             logger.info("Открылся чат по заказу %s, пробуем отправить доп инфо", id)
             sleep(2)
-            to_send = randint(0, 2)
-            if to_send == 0:
-                logger.info("Не отправляем доп инфо %s", id)
-            elif to_send in [1, 2]:
-                message = naputstvie
-                #messages[to_send]
-                logger.info("По заказу %s Отправляем доп инфо %s", id, message)
-                if not testing_send_message(driver, message):
-                    logger.info("Не получилось отправить доп инфо %s", id)
-                else:
-                    start_time = time.time()
-                    # answers_dir = 'answers'
-                    # if not exists(answers_dir):
-                    #     makedirs(answers_dir)
-                    # with open(f'{answers_dir}/dop_info_{id}_{start_time}.txt', 'w') as f:
-                    #     f.write(message)
-                    add_message(sql, id, message, start_time, None, None)
+            # to_send = randint(0, 2)
+            # if to_send == 0:
+            #     logger.info("Не отправляем доп инфо %s", id)
+            # elif to_send in [1, 2]:
+            message = f"""
+{privetstvie}
+
+{midle_text}
+{distant_advertasing}
+{proshanie}
+            """
+            #messages[to_send]
+            logger.info("По заказу %s Отправляем доп инфо %s", id, message)
+            if not testing_send_message(driver, message):
+                logger.info("Не получилось отправить доп инфо %s", id)
             else:
-                logger.error("Ошибка")
+                start_time = time.time()
+                # answers_dir = 'answers'
+                # if not exists(answers_dir):
+                #     makedirs(answers_dir)
+                # with open(f'{answers_dir}/dop_info_{id}_{start_time}.txt', 'w') as f:
+                #     f.write(message)
+                add_message(sql, id, message, start_time, None, None)
+            # else:
+            #     logger.error("Ошибка")
         return "Sent", html, html_choose, html_otklik_param, all_text_to_gpt_with_numbers, ban, limit
     html = driver.page_source
     logger.error("Отклик не отправлен на карточке %s", id)

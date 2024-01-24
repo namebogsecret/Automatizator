@@ -53,23 +53,25 @@ def fill_text_field(id, texteria, text_gpt, driver):
 def process_card(id, w3, all_text, all_text_to_gpt_with_numbers, sql, driver):
     texteria = w3.is_it_on_the_page("textarea")
     write_to_log_file("0", id)
-    naputstvie = None
     if not texteria:
         write_to_log_file("4", id)
         logger.error(f"Не найден элемент textarea на карточке {id}")
         write_to_log_file("5", id)
-        return False, naputstvie
+        return False, None, None, None, None
     
     try:
-        text_gpt, naputstvie = gpt(all_text, id, all_text_to_gpt_with_numbers, timeout=240, sql=sql)
-        write_to_log_file(f"6 {text_gpt}", id)
-        if text_gpt is None:
+        privetstvie, midle_text, distant_advertasing, proshanie, naputstvie = gpt(all_text, id, all_text_to_gpt_with_numbers, timeout=240, sql=sql)
+        write_to_log_file(f"""6 {privetstvie}
+{midle_text}
+{distant_advertasing}
+{proshanie}""", id)
+        if privetstvie is None:
             write_to_log_file("7", id)
             raise GPTException("Не удалось получить текст от GPT")
         
-        if fill_text_field(id, texteria, text_gpt, driver):
+        if fill_text_field(id, texteria, naputstvie, driver):
             write_to_log_file("8", id)
-            return True, naputstvie
+            return True, privetstvie, midle_text, distant_advertasing, proshanie
 
     except (GPTException, Exception) as e:
         #logger.warning(f"Не удалось получить текст от GPT на карточке {id}. Ошибка: {e}") #Ошибка: 'str' object has no attribute 'get'
@@ -84,14 +86,14 @@ def process_card(id, w3, all_text, all_text_to_gpt_with_numbers, sql, driver):
                 click(avtootklik, driver, buttomtype="otklik1")
                 write_to_log_file("12", id)
                 #logger.info(f"Выбран автоотклик на карточке {id}")
-                return True, naputstvie
+                return True, privetstvie,  midle_text, distant_advertasing, proshanie
             except Exception as e:
                 write_to_log_file(f"13 {e}", id)
                 #print(e)
                 #logger.warning(f"Не удалось выбрать автоотклик на карточке {id}. Ошибка: {e}")
 
         #logger.error(f"Не удалось обработать карточку {id}")
-        return False, naputstvie
+        return False, None, None, None, None
 
 
 def filling_the_card(driver: Safari, id: str, all_text:str, w3: WebScraper, all_text_to_gpt_with_numbers, sql) -> bool:    
@@ -100,11 +102,11 @@ def filling_the_card(driver: Safari, id: str, all_text:str, w3: WebScraper, all_
     # textarea заполняется через js
     actions = ActionChains(driver)
     write_to_log_file("00", id)
-    card_processed, naputstvie = process_card(id, w3, all_text, all_text_to_gpt_with_numbers, sql, driver)
+    card_processed, privetstvie, midle_text, distant_advertasing, proshanie = process_card(id, w3, all_text, all_text_to_gpt_with_numbers, sql, driver)
     write_to_log_file("000", id)
     if not card_processed:
         write_to_log_file("0000", id)
-        return False, naputstvie
+        return False, None, None, None, None
     
     sleep(0.5 + random())
     #logger.info("Выбор цены на карточке %s", id)
@@ -113,17 +115,17 @@ def filling_the_card(driver: Safari, id: str, all_text:str, w3: WebScraper, all_
     if not price_conteiner:
         write_to_log_file("000000", id)
         logger.error("Не удалось найти контейнер цены на карточке %s", id)
-        return False, naputstvie
+        return False, None, None, None, None
     w4 = WebScraper(price_conteiner, "dict_otklik")
     price_input = w4.is_it_on_the_page("price_input")
     div_price_dur = w3.is_it_on_the_page("duration_chois_conteiner")
     
     if not price_input or not div_price_dur:
         logger.error("Не удалось найти поле цены %s или продолжительности %s на карточке %s", str(price_input), str(div_price_dur), id)
-        return False, naputstvie
+        return False, None, None, None, None
     if price_input.get_attribute("value") == "6000":
         #logger.info("Цена уже заполнена на карточке %s", id)
-        return True, naputstvie
+        return True, privetstvie, midle_text, distant_advertasing, proshanie
     #scroll_down(driver, 1, 2000)
     driver.execute_script("arguments[0].scrollIntoView();", price_input)
     #actions.move_to_element(price_input).perform()
@@ -142,11 +144,11 @@ def filling_the_card(driver: Safari, id: str, all_text:str, w3: WebScraper, all_
     p_90 = w5.is_it_on_the_page("duration_90")
     if not p_90:
         #logger.error("Не удалось найти продолжительность на карточке %s", id)
-        return False, naputstvie
+        return False, None, None, None, None
     driver.execute_script("arguments[0].focus();", p_90)
     sleep(0.1)
     
     actions.move_to_element(p_90).perform()
     p_90.click()
     #logger.info("Все заполнено на карточке %s", id)    
-    return True, naputstvie
+    return True, privetstvie, midle_text, distant_advertasing, proshanie

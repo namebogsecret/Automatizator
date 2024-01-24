@@ -28,8 +28,7 @@
         "chat_message" : ["cwc_mYPjXm", "css"],
         "chat_send_button" : ["cwc_2ZuB7d cwc_QhSzhx cwc_LE2JDG cwc_R7hGma cwc_mKwuN-", "fullcss"],
         "chat_div_with_textarea" : ["cwc_Bp-2JR", "css"],
-        "chat_textarea" : ["input-default cwc_IqsYxL cwc_xP-a1Z", "fullcss"],
-
+        "chat_textarea" : ["input-default cw_IqsYxL cw_xP-a1Z", "fullcss"],
         "ostalos" : ["profile-rating-card__value-element", "fullcss"]
     },
     "dict_card_in_list": {
