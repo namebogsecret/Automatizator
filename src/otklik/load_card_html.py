@@ -27,6 +27,7 @@ import time
 from dialog.testing_send_message import testing_send_message
 
 from database.add_message import add_message
+from utils.web_hook import WebhookSender
 
 logger = getLogger(__name__)
 logger = set_logger(logger)
@@ -248,6 +249,14 @@ def load_card_html(url, driver, sql) -> tuple:
                 add_message(sql, id, message, start_time, None, None)
             # else:
             #     logger.error("Ошибка")
+        sender = WebhookSender()
+        data = {
+            'service': 'otklik',
+            'event': 'New Otklik',
+            'error': False,
+            'message': f'Отклик отправлен на карточке {id}'
+        }
+        sender.send_webhook(data)
         return "Sent", html, html_choose, html_otklik_param, all_text_to_gpt_with_numbers, ban, limit
     html = driver.page_source
     logger.error("Отклик не отправлен на карточке %s", id)

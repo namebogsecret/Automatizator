@@ -49,6 +49,7 @@ import json
 import os
 from stata.get_ostalos import get_ostalos
 #from memory_profiler import profile
+from utils.web_hook import WebhookSender
 
 def set_affinity(cores):
     """ Устанавливает аффинность (привязку) процесса к определенным ядрам. """
@@ -241,6 +242,15 @@ def main_loop():
                 delta = max (o1 - otklikov, v1 - vakansiy, d1 - deleted,
                              e1 - errors, n1 - nepodhodit, b1 - banned, l1 - limited)
                 delta_otkl = o1 - otklikov
+                if e1 - errors > 0:
+                    sender = WebhookSender()
+                    data = {
+                        'service': 'otklik',
+                        'event': 'error',
+                        'error': True,
+                        'message': f"Ошибка при обновлении карточек"
+                    }
+                    response = sender.send_webhook(data)
                 otklikov, vakansiy, deleted, errors, nepodhodit, banned, limited = o1, v1, d1, e1, n1, b1, l1
                 """app.sent_number["text"] = str(otklikov)
                 app.vakansii_number["text"] = str(vakansiy)

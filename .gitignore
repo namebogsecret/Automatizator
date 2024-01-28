@@ -56,3 +56,9 @@ last_update.txt
 n.php
 cookies.txt
 log_texts/
+bin/
+cd/
+pyvenv.cfg
+lib64
+lib/
+share/
