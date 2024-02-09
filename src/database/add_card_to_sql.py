@@ -17,10 +17,10 @@ def add_card_to_sql(connection, card: dict):
         return False
     
     time = card['posted']
-    if time == "None":
-        time = "01 января 00:00"
+    if time == None or time == "None":
+        time = "1 января в 00:00"
     dt_str, timestamp = get_real_datetime(time)
-    if card['modified'] == "":
+    if card['modified'] == "" or card['modified'] == "None":
         card['modified'] = None
     # SQL-запрос для добавления данных в таблицу
     sqld = '''INSERT INTO Applications 

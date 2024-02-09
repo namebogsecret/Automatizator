@@ -98,11 +98,11 @@ def prepare_page(scrolldown: int = 5):
 
     #driver.implicitly_wait(10)
     # Получение высоты экрана
-    driver.set_window_position(1440,0)
+    driver.set_window_position(0,0)
     #driver.maximize_window()
     height = driver.execute_script("return window.screen.availHeight")
     # Установка размера окна браузера по вертикали
-    driver.set_window_size(height/2, height-50)
+    driver.set_window_size(700, 1000)
     #devtools = driver.create_devtools_session()
 
     # Переход на URL-адрес

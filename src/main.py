@@ -242,15 +242,7 @@ def main_loop():
                 delta = max (o1 - otklikov, v1 - vakansiy, d1 - deleted,
                              e1 - errors, n1 - nepodhodit, b1 - banned, l1 - limited)
                 delta_otkl = o1 - otklikov
-                if e1 - errors > 0:
-                    sender = WebhookSender()
-                    data = {
-                        'service': 'otklik',
-                        'event': 'error',
-                        'error': True,
-                        'message': f"Ошибка при обновлении карточек"
-                    }
-                    response = sender.send_webhook(data)
+                
                 otklikov, vakansiy, deleted, errors, nepodhodit, banned, limited = o1, v1, d1, e1, n1, b1, l1
                 """app.sent_number["text"] = str(otklikov)
                 app.vakansii_number["text"] = str(vakansiy)
@@ -286,6 +278,14 @@ def main_loop():
             logger.error(e)
             some_errors += 1
             #app.state_label["text"] = "State: Error while working with cards..."
+            sender = WebhookSender()
+            data = {
+                'service': 'otklik',
+                'event': 'error',
+                'error': True,
+                'message': f"Ошибка при обновлении карточек {e}"
+            }
+            response = sender.send_webhook(data)
             logger.error("Не удалось обновить карточки")
             my_driver_manager.reset() 
         if some_errors > 5:

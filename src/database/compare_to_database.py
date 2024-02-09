@@ -23,6 +23,7 @@ def allready_in_db(id, connection):
         cursor.close()  # Закрываем курсор
 
 def compare_to_database(card, connection):
+    logger.debug(str(card))
     if allready_in_db(card["id"], connection):
         logger.debug('Карточка с id = %s есть в базе данных', card["id"])
         return 1

@@ -26,7 +26,7 @@ class CardGetter:
                     return []
                 #remove all cards with id="stories"
                 for card in get_all_cards:
-                    if card.get_attribute('id') != 'stories':
+                    if card.get_attribute('id') != 'stories' and card.get_attribute('id') != 'divider' and card.get_attribute('class') != 'InViewPort__Container-sc-1vtbhrt-0 fPWrph':
                         cards.append(card)
             else:
                 pass

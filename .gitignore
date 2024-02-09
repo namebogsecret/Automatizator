@@ -25,8 +25,6 @@ files_/*
 repetitors.db
 files/*
 src/main_nocapcha
-src/configuration/dictionaries_old copy 2.json
-src/configuration/dictionaries_old copy.json
 src/main.py.save
 src/capcha/.env
 src/configuration/api.txt
@@ -62,3 +60,4 @@ pyvenv.cfg
 lib64
 lib/
 share/
+
