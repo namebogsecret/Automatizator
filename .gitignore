@@ -1,5 +1,4 @@
 *.png
-*.html
 *.log
 *.zip
 .vscode/*
@@ -61,3 +60,6 @@ lib64
 lib/
 share/
 
+
+test.html
+captcha/
