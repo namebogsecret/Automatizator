@@ -5,10 +5,11 @@ from os import getenv
 from icecream import ic
 import openai
 from dotenv import load_dotenv
+from functools import lru_cache
 
-
-def get_application(user_info: json, middle_text: str, whant_distant: bool = False, temperature = 0.1) -> json:
-
+@lru_cache(maxsize=20)
+def get_application(user_info: str, middle_text: str, whant_distant: bool = False, temperature = 0.1) -> json:
+    user_info = json.loads(user_info)
     load_dotenv()
 
     openai.api_key = getenv("gpt_api")

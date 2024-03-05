@@ -7,6 +7,9 @@ logger = set_logger(logger)
 
 def allready_in_db(id, connection):
     try:
+        if id is None:
+            logger.error("Передано None в качестве идентификатора")
+            return False
         # Create a cursor
         cursor = connection.cursor()
         # Execute the query
@@ -23,6 +26,12 @@ def allready_in_db(id, connection):
         cursor.close()  # Закрываем курсор
 
 def compare_to_database(card, connection):
+    if card is None:
+        logger.error("Передан None в качестве карточки")
+        return 0
+    if "id" not in card or card["id"] is None:
+        logger.error("Отсутствует id в карточке или он равен None")
+        return 0
     logger.debug(str(card))
     if allready_in_db(card["id"], connection):
         logger.debug('Карточка с id = %s есть в базе данных', card["id"])

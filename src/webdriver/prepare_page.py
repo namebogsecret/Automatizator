@@ -123,8 +123,10 @@ def prepare_page(scrolldown: int = 5):
                         logger.warning(f"Ошибка при загрузке cookies: {e}")
                 else:
                     logger.info("Cookies file is empty!")
+        sleep(10+5*random())
+        logger.info(f"geting page {url2}")
         driver.get(url2)
-
+        logger.info("got page")
         # Save cookies to a file
         with open('cookies.txt', 'w') as file:
             json.dump(driver.get_cookies(), file)

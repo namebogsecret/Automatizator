@@ -7,7 +7,9 @@ import openai
 from dotenv import load_dotenv
 from gpt.get_application import get_application
 from time import time
+from functools import lru_cache
 
+@lru_cache(maxsize=10)
 def get_user_data(all_text:str) -> json:
     load_dotenv()
 

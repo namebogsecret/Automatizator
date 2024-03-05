@@ -11,6 +11,12 @@ from parsing_card.pars_prices import parse_prices
 logger = getLogger(__name__)
 logger = set_logger(logger)
 
+def convert_to_distant_flag(value):
+    if value and 'Дистанционно' in value:
+        return 1
+    else:
+        return 0
+
 def add_card_to_sql(connection, card: dict):
     if card['id'] == "None":
         logger.error("Карточка с id = None не добавлена в базу данных")
@@ -22,6 +28,7 @@ def add_card_to_sql(connection, card: dict):
     dt_str, timestamp = get_real_datetime(time)
     if card['modified'] == "" or card['modified'] == "None":
         card['modified'] = None
+    card['distant'] = convert_to_distant_flag(card['distant'])
     # SQL-запрос для добавления данных в таблицу
     sqld = '''INSERT INTO Applications 
               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''

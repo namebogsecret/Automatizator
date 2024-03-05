@@ -5,6 +5,7 @@ if getattr(sys, 'frozen', False):
 else:
     src_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(src_path)"""
+import json
 from configuration.read_strings_from_file import read_strings_from_file
 from gpt.ask_gpt import ask_gpt
 #from requests import get, post
@@ -20,9 +21,17 @@ from time import time
 from gpt.ask_gpt import write_answer_to_file
 from gpt.get_user_data import get_user_data
 from gpt.get_application import get_application
+from functools import lru_cache
+
+@lru_cache(maxsize=20)
+def rand_int(all_text_to_gpt_with_numbers:str):
+    return randint(1,9)/10
+
+def rand_three(all_text_to_gpt_with_numbers:str):
+    return randint(1,3)
 
 def gpt(html_about:str, id: str, all_text_to_gpt_with_numbers:str, witch:int = 1, gpt4: bool = True,  temp: float = 2/10, timeout=240, sql = None):
-    temp = randint(1,9)/10
+    temp = rand_int(all_text_to_gpt_with_numbers)
     api_key = get_api()
     client4 = GPTClient(api_key, "gpt-4") #gpt-4 "gpt-4-1106-preview"
     client3 = GPTClient(api_key)
@@ -44,13 +53,13 @@ def gpt(html_about:str, id: str, all_text_to_gpt_with_numbers:str, witch:int = 1
     user_date = get_user_data(html_about)
     user_date = user_date if user_date else html_about
     
-    middle_one = randint(1,3)
+    middle_one = rand_three(all_text_to_gpt_with_numbers)
     
     middle_text = strings_dict[f'midle_text_{middle_one}']
     
     
-
-    application = get_application(user_date, middle_text, whant_distant=bool(user_date.get("remote", False)), temperature=temp)
+    user_date_json = json.dumps(user_date)
+    application = get_application(user_date_json, middle_text, whant_distant=bool(user_date.get("remote", False)), temperature=temp)
     privetstvie = application.get("privetstvie", None)
     distant_advertasing = application.get("distant_advertasing", None)
     proshanie = application.get("proshanie", None)
