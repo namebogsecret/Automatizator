@@ -30,10 +30,15 @@ logger = set_logger(logger)
 class GPTException(Exception):
     pass
 
-def write_to_log_file(text, id):
+def write_to_log_file(text, id, main=False, naputstvie=False):
     if not os.path.exists("log_texts"):
         os.mkdir("log_texts")
-    with open(f"log_texts/{id}.txt", "a") as f:
+    file_name = f"log_texts/{id}.txt"
+    if main:
+        file_name = f"log_texts/{id}_main.txt"
+    if naputstvie:
+        file_name = f"log_texts/{id}_naputstvie.txt"
+    with open(file_name, "a") as f:
         f.write(f"{text}\n")
 
 def fill_text_field(id, texteria, text_gpt, driver):
@@ -60,11 +65,23 @@ def process_card(id, w3, all_text, all_text_to_gpt_with_numbers, sql, driver):
         return False, None, None, None, None
     
     try:
+        if os.path.exists(f"log_texts/{id}_main.txt") and os.path.exists(f"log_texts/{id}_naputstvie.txt"):
+            with open(f"log_texts/{id}_main.txt", "r") as f:
+                this_text = f.read()
+            with open(f"log_texts/{id}_naputstvie.txt", "r") as f:
+                naputstvie = f.read()
+            if fill_text_field(id, texteria, naputstvie, driver):
+                write_to_log_file("68", id)
+                return True, this_text, "", "", ""
+            else:
+                write_to_log_file("69", id)
+                return False, None, None, None, None
         privetstvie, midle_text, distant_advertasing, proshanie, naputstvie = gpt(all_text, id, all_text_to_gpt_with_numbers, timeout=240, sql=sql)
-        write_to_log_file(f"""6 {privetstvie}
+        write_to_log_file(naputstvie, id, naputstvie=True)
+        write_to_log_file(f"""{privetstvie}
 {midle_text}
 {distant_advertasing}
-{proshanie}""", id)
+{proshanie}""", id, main=True)
         if privetstvie is None:
             write_to_log_file("7", id)
             raise GPTException("Не удалось получить текст от GPT")

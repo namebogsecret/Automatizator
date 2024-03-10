@@ -12,6 +12,7 @@ from gpt.ask_gpt import ask_gpt
 #from json import dumps, loads
 #from time import time
 from gpt.gptclient import GPTClient
+import re
 #from constants.api import api_key as api_old
 from gpt.get_request import get_request, get_request1, get_request2
 from configuration.get_api import get_api
@@ -27,6 +28,7 @@ from functools import lru_cache
 def rand_int(all_text_to_gpt_with_numbers:str):
     return randint(1,9)/10
 
+@lru_cache(maxsize=20)
 def rand_three(all_text_to_gpt_with_numbers:str):
     return randint(1,3)
 
@@ -64,10 +66,10 @@ def gpt(html_about:str, id: str, all_text_to_gpt_with_numbers:str, witch:int = 1
     distant_advertasing = application.get("distant_advertasing", None)
     proshanie = application.get("proshanie", None)
     naputstvie = application.get("naputstvie", None)
-    write_answer_to_file(start_time, f"""{privetstvie}
+    write_answer_to_file(start_time, f"""///{privetstvie}
 {middle_text}
 {distant_advertasing}
-{proshanie}""",
+{proshanie}///""",
 temp,
 time() - start_time,
 id,

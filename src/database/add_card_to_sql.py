@@ -18,16 +18,18 @@ def convert_to_distant_flag(value):
         return 0
 
 def add_card_to_sql(connection, card: dict):
-    if card['id'] == "None":
+    if card['id'] == "None" or card['id'] == None or card['id'] == "":
         logger.error("Карточка с id = None не добавлена в базу данных")
         return False
-    
+    card['id'] = int(card['id'])
+    card['vizited'] = None if card['vizited'] in ("", "None") else int(card['vizited'])
     time = card['posted']
     if time == None or time == "None":
         time = "1 января в 00:00"
     dt_str, timestamp = get_real_datetime(time)
     if card['modified'] == "" or card['modified'] == "None":
         card['modified'] = None
+
     card['distant'] = convert_to_distant_flag(card['distant'])
     # SQL-запрос для добавления данных в таблицу
     sqld = '''INSERT INTO Applications 
