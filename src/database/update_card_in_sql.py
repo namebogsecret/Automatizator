@@ -20,6 +20,11 @@ def update_card_in_sql(sql, card: dict):
     if time == "None":
         time = "01 января 00:00"
     dt_str, timestamp = get_real_datetime(time)
+    try:
+        card['id'] = int(card['id'])
+    except (ValueError, TypeError):
+        logger.error("Некорректное значение id карточки: %s", card['id'])
+        return False
     # SQL-запрос для добавления данных в таблицу
     sqld = '''UPDATE Applications SET url=%s, vizited=%s, img1=%s, img2=%s, schedule=%s, class_description=%s, in_time=%s, price=%s, distant=%s, address=%s, price_all=%s, ot_do=%s, subject=%s, name=%s, school=%s, posted=%s, html=%s, datetime=%s, modified=%s, timestamp_last=%s WHERE id=%s'''
     data = (card['url'], card['vizited'], card['img1'], card['img2'], card['schedule'], card['class_description'], card['in_time'], card['price'], card['distant'], card['address'], card['price_all'], card['ot_do'], card['subject'], card['name'], card['school'], card['posted'], card['html'], dt_str, card['modified'], timestamp, card['id'])

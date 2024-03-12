@@ -21,16 +21,38 @@ def add_card_to_sql(connection, card: dict):
     if card['id'] == "None" or card['id'] == None or card['id'] == "":
         logger.error("Карточка с id = None не добавлена в базу данных")
         return False
-    card['id'] = int(card['id'])
-    card['vizited'] = None if card['vizited'] in ("", "None") else int(card['vizited'])
+    try:
+        card['id'] = int(card['id'])
+    except (ValueError, TypeError):
+        logger.error("Некорректное значение id карточки: %s", card['id'])
+        return False
+    
+    for field in ['vizited', 'school']:
+        if card[field] not in ("", "None", None):
+            try:
+                card[field] = int(card[field])
+            except (ValueError, TypeError):
+                logger.error("Некорректное значение %s: %s", field, card[field])
+                card[field] = None
+        else:
+            card[field] = None
+    
     time = card['posted']
     if time == None or time == "None":
         time = "1 января в 00:00"
     dt_str, timestamp = get_real_datetime(time)
-    if card['modified'] == "" or card['modified'] == "None":
+    
+    if card['modified'] not in ("", "None", None):
+        try:
+            card['modified'] = int(card['modified'])
+        except (ValueError, TypeError):
+            logger.error("Некорректное значение modified: %s", card['modified'])
+            card['modified'] = None
+    else:
         card['modified'] = None
 
     card['distant'] = convert_to_distant_flag(card['distant'])
+    
     # SQL-запрос для добавления данных в таблицу
     sqld = '''INSERT INTO Applications 
               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''

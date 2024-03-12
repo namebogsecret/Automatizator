@@ -201,10 +201,10 @@ def load_card_html(url, driver, sql) -> tuple:
     w6 = WebScraper(driver, "dict_otklik")
     button_otklik = w6.is_it_on_the_page("final_butom1")
     if not button_otklik:
-        logger.info("Нет кнопки1 отправить отклик %s", id)
+        logger.error("Нет кнопки1 отправить отклик %s", id)
         button_otklik = w6.is_it_on_the_page("final_butom2")
         if not button_otklik:
-            logger.info("Нет кнопки2 отправить отклик %s", id)
+            logger.error("Нет кнопки2 отправить отклик %s", id)
             return "Error", html, html_choose, html_otklik_param, all_text_to_gpt_with_numbers, ban, limit
     driver.execute_script("arguments[0].focus();", button_otklik)
     sleep(0.1)
@@ -215,11 +215,11 @@ def load_card_html(url, driver, sql) -> tuple:
     else:
         logger.info("Нет кнопки3 отправить отклик %s", id)
         return "Error", html, html_choose, html_otklik_param, all_text_to_gpt_with_numbers, ban, limit
-    logger.info("Отклик отправлен на карточке %s", id)
-    sleep(5+ randint(-2, 2))
+    logger.info("Отклик отправлен на карточке 1 %s", id)
+    sleep(10+ randint(-2, 2))
     test_url = driver.current_url
     if not test_url.startswith(url2):
-        logger.info("Отклик отправлен на карточке %s", id)
+        logger.info("Отклик отправлен на карточке 2 %s", id)
         w10 = WebScraper(driver, "dict_otklik")
         if w10.is_it_on_the_page("chat_page"):
             logger.info("Открылся чат по заказу %s, пробуем отправить доп инфо", id)
@@ -238,7 +238,7 @@ def load_card_html(url, driver, sql) -> tuple:
             #messages[to_send]
             logger.info("По заказу %s Отправляем доп инфо %s", id, message)
             if not testing_send_message(driver, message):
-                logger.info("Не получилось отправить доп инфо %s", id)
+                logger.error("Не получилось отправить доп инфо %s", id)
             else:
                 start_time = time.time()
                 # answers_dir = 'answers'
@@ -254,12 +254,12 @@ def load_card_html(url, driver, sql) -> tuple:
             'service': 'otklik',
             'event': 'New Otklik',
             'error': False,
-            'message': f'Отклик отправлен на карточке {id}'
+            'message': f'Отклик отправлен на карточке 3 {id}'
         }
         sender.send_webhook(data)
         return "Sent", html, html_choose, html_otklik_param, all_text_to_gpt_with_numbers, ban, limit
     html = driver.page_source
-    logger.error("Отклик не отправлен на карточке %s", id)
+    logger.error(f"Отклик не отправлен на карточке {id} {test_url}", id)
     return "Error", html, html_choose, html_otklik_param, all_text_to_gpt_with_numbers, ban, limit
     
 
