@@ -51,6 +51,8 @@ from stata.get_ostalos import get_ostalos
 #from memory_profiler import profile
 from utils.web_hook import WebhookSender
 
+from time_castom.castom_time_utils import get_sleep_time
+
 def set_affinity(cores):
     """ Устанавливает аффинность (привязку) процесса к определенным ядрам. """
     pid = os.getpid()
@@ -133,7 +135,7 @@ class driver_manager():
         except:
             return False
     
-    def get_driver(self, scrols = 2):
+    def get_driver(self, scrols = 0):
         if self.check():
             return self.driver
         else:
@@ -146,7 +148,7 @@ class driver_manager():
         else:
             return None
 
-    def reset(self,scrolls=2):
+    def reset(self,scrolls=0):
         self.delete()
         return self._set_driver(scrolls)
     
@@ -166,8 +168,9 @@ def main_loop():
     bots2 = TelegramBots(2)
     bots1.to_all_mine("Запустился бот %s" % start_time.strftime("%d.%m.%Y %H:%M:%S"),
                       False)
-
-    sleep(30+randint(-10, 10))
+    sleep_time = get_sleep_time()
+    time_to_sleep = sleep_time + randint(-120, 120)
+    sleep(time_to_sleep + randint(-10, 10))
     logger.info("Запуск главного цикла")
     #app.state_label["text"] = "State: Preparing page..."
     my_driver_manager = driver_manager(scrolls)
@@ -257,7 +260,7 @@ def main_loop():
                     try:
                         if 0 <= datetime.now().minute <= 5:
                             ostalos = get_ostalos(my_driver_manager.get_driver())
-                            sleep(10)
+                            sleep(10 + randint(-3, 3))
                             if not ostalos:
                                 logger.error("Не удалось получить осталось")
                             else:
@@ -337,7 +340,9 @@ def main_loop():
         # обновляем значение числа на метке
         sql.close()
         #app.loops_number["text"] = str(ciklov)
-        time_to_sleep = time_for_otklik + randint(-30, 30)
+        sleep_time = get_sleep_time()
+        time_to_sleep = sleep_time + randint(-120, 120)
+        
         #time_of_continue = datetime.now() + timedelta(seconds=time_to_sleep)
         #app.state_label["text"] = "State: will continue in "
         # + str(time_of_continue.strftime("%H:%M:%S")) + " seconds"
@@ -345,7 +350,7 @@ def main_loop():
         for cikl_time in range(time_to_sleep):
             second_timer_stop = time()
             proshlo_vremeni = second_timer_stop - timer_start
-            if flag.stop or flag.update_now or proshlo_vremeni > time_for_otklik + random_time:
+            if flag.stop or flag.update_now or proshlo_vremeni > time_to_sleep + random_time:
                 break
             sleep(2+randint(-1, 1))
         

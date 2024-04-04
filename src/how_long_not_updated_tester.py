@@ -12,7 +12,7 @@ def parse_time(time_str):
 def should_restart_service(stored_time):
     current_time = datetime.now()
     difference = current_time - stored_time
-    return difference.total_seconds() > 3600
+    return difference.total_seconds() > 5000
 
 def restart_service(service_name):
     subprocess.run(["sudo", "systemctl", "restart", service_name], check=True)

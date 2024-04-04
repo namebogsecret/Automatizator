@@ -45,7 +45,7 @@ def fill_text_field(id, texteria, text_gpt, driver):
     try:
         driver.execute_script("arguments[0].value = arguments[1];", texteria, text_gpt)
         write_to_log_file("1", id)
-        sleep(15)
+        sleep(17 + randint(-3, 3))
         texteria.send_keys(" ")
         write_to_log_file("2", id)
         #logger.info(f"Отклик заполнен gpt на карточке {id}")
@@ -125,7 +125,7 @@ def filling_the_card(driver: Safari, id: str, all_text:str, w3: WebScraper, all_
         write_to_log_file("0000", id)
         return False, None, None, None, None
     
-    sleep(0.5 + random())
+    sleep(0.9 + random())
     #logger.info("Выбор цены на карточке %s", id)
     price_conteiner = w3.is_it_on_the_page("price_conteiner2")
     write_to_log_file("00000", id)
@@ -150,20 +150,20 @@ def filling_the_card(driver: Safari, id: str, all_text:str, w3: WebScraper, all_
     price_input.send_keys("6000")
     #logger.info("Цена заполнена на карточке %s", id)
     driver.execute_script("arguments[0].focus();", div_price_dur)
-    sleep(0.1)
+    sleep(0.3 + random())
     driver.execute_script("arguments[0].scrollIntoView();", div_price_dur)
     actions.move_to_element(div_price_dur).perform()
     div_price_dur.click()
     #logger.info("Контейнер продолжительности найден на карточке %s", id)
     #logger.info("Выбор продолжительности на карточке %s", id)
-    sleep(1.5 + random())
+    sleep(1.7 + random())
     w5 = WebScraper(driver, "dict_otklik")
     p_90 = w5.is_it_on_the_page("duration_90")
     if not p_90:
         #logger.error("Не удалось найти продолжительность на карточке %s", id)
         return False, None, None, None, None
     driver.execute_script("arguments[0].focus();", p_90)
-    sleep(0.1)
+    sleep(0.3 + random())
     
     actions.move_to_element(p_90).perform()
     p_90.click()

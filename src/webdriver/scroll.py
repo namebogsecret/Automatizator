@@ -10,6 +10,9 @@ logger = set_logger(logger)
 
 def scroll_down(driver, times = 1, height = 4000000):
     logger.info('Started scrolling %s times', times)
+    if times <=0:
+        logger.warning('Invalid number of times to scroll down')
+        return
     for i in range(1, times):
         driver.execute_script(f"window.scrollTo(0, {height});")
         sleep(1)

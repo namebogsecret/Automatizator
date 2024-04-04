@@ -44,7 +44,8 @@ def is_temp_removed(id, sql, time_delta=30):  # time_delta - время в дн�
         cursor.close()
 
 def remove_temp_removed(id, sql):
-    cursor = sql.cursor()
-    cursor.execute("DELETE FROM Students_temp_removed WHERE id = %s", (id,))
-    logger.info("Студент с id = " + str(id) + " удален из базы отложенных")
-    sql.commit()
+    ...
+    # cursor = sql.cursor()
+    # cursor.execute("DELETE FROM Students_temp_removed WHERE id = %s", (id,))
+    # logger.info("Студент с id = " + str(id) + " удален из базы отложенных")
+    # sql.commit()

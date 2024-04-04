@@ -112,7 +112,7 @@ def load_card_html(url, driver, sql) -> tuple:
             return "Deleted", html, html_choose, html_otklik_param, all_text_to_gpt_with_numbers,   ban, limit
      
 
-    sleep(2 )
+    sleep(2 + random())
     #versiya dlya mobilnogo
     otklik = w1.is_it_on_the_page("otklik_chouse_button") #  кнопка выбора отклика"fdEiIF", "css"],chpKsZ
     if not otklik:
@@ -120,7 +120,7 @@ def load_card_html(url, driver, sql) -> tuple:
         return "Error", html, html_choose, html_otklik_param, all_text_to_gpt_with_numbers, ban, limit
 
     #pik()    
-    sleep(1)
+    sleep(1 + random())
     if not click(otklik, driver, 1):
         logger.info("Не получилось нажать на кнопку откликнуться mibile %s", id)
         html = driver.page_source
@@ -207,7 +207,7 @@ def load_card_html(url, driver, sql) -> tuple:
             logger.error("Нет кнопки2 отправить отклик %s", id)
             return "Error", html, html_choose, html_otklik_param, all_text_to_gpt_with_numbers, ban, limit
     driver.execute_script("arguments[0].focus();", button_otklik)
-    sleep(0.1)
+    sleep(0.2 + random())
     #button_otklik.send_keys(Keys.RETURN)
     #actions.move_to_element(button_otklik).perform() # error ButtonStyles__Label-sc-1nuwmcp-4 kurYnT
     if type(button_otklik) == WebElement:
@@ -223,7 +223,7 @@ def load_card_html(url, driver, sql) -> tuple:
         w10 = WebScraper(driver, "dict_otklik")
         if w10.is_it_on_the_page("chat_page"):
             logger.info("Открылся чат по заказу %s, пробуем отправить доп инфо", id)
-            sleep(2)
+            sleep(2 + random())
             # to_send = randint(0, 2)
             # if to_send == 0:
             #     logger.info("Не отправляем доп инфо %s", id)
