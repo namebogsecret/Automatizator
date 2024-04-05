@@ -7,6 +7,7 @@ if getattr(sys, 'frozen', False):
 else:
     src_path = dirname(abspath(__file__))
 sys.path.append(src_path)"""
+import sys
 from configuration.read_strings_from_file import read_strings_from_file
 
 from sys import exit as sys_exit
@@ -142,7 +143,11 @@ class driver_manager():
             return self._set_driver(scrols)
 
     def _set_driver(self, scrolls):
-        self.driver, _ = prepare_page(scrolls)
+        try:
+            self.driver, _ = prepare_page(scrolls)
+        except Exception as e:
+            logger.error(e)
+            self.driver = None
         if self.check():
             return self.driver
         else:
@@ -170,6 +175,7 @@ def main_loop():
                       False)
     sleep_time = get_sleep_time()
     time_to_sleep = sleep_time + randint(-120, 120)
+    logger.info("Время до первого запуска: %s", time_to_sleep)
     sleep(time_to_sleep + randint(-10, 10))
     logger.info("Запуск главного цикла")
     #app.state_label["text"] = "State: Preparing page..."
@@ -335,14 +341,14 @@ def main_loop():
                 logger.error("Не удалось перейти на страницу https://repetitors.info/backoffice/n.php")
                 
         #app.state_label["text"] = "State: closing sql..."
-        if delta_otkl > 0:
-            flag.update_now = True
+        # if delta_otkl > 0:
+        #     flag.update_now = True
         # обновляем значение числа на метке
         sql.close()
         #app.loops_number["text"] = str(ciklov)
         sleep_time = get_sleep_time()
-        time_to_sleep = sleep_time + randint(-120, 120)
-        
+        time_to_sleep = max (0, int(sleep_time) + randint(-120, 120))
+        logger.info("Время до следующего запуска: %s", time_to_sleep)
         #time_of_continue = datetime.now() + timedelta(seconds=time_to_sleep)
         #app.state_label["text"] = "State: will continue in "
         # + str(time_of_continue.strftime("%H:%M:%S")) + " seconds"
@@ -362,6 +368,7 @@ def main_loop():
             sleep(2 + randint(-1, 1))
         #app.state_label["text"] = "State: Trying to open main page."
         collect()
+
         if not flag.stop:
             strings_dict = read_strings_from_file()
             cards_at_a_time = int(strings_dict["cards_at_a_time"])
@@ -396,6 +403,7 @@ def main_loop():
                 # "State: Error while opening main page, reloading..."
                 sleep(10 + randint(-2, 2))
                 continue
+
         logger.info("Закрытие и сохранение соединения с базой данных")
         #how_many_files()
                 # Save cookies to a file
@@ -408,6 +416,8 @@ def main_loop():
             logger.error("Не удалось сохранить cookies в файл")
         logger.info("-----закончился цикл %s ------", ciklov)
         flag.update_now = False
+
+        
     # Закрытие экземпляра драйвера
     
     #app.state_label["text"] = "State: Closing driver..."
@@ -415,6 +425,16 @@ def main_loop():
     bots1.to_all_mine("Бот выключается %s" % start_time.strftime("%d.%m.%Y %H:%M:%S"),
                       False)
 
+
+
+import signal
+
+def signal_handler(sig, frame):
+    logger.info(f"Received signal: {sig}")
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
 
 timer_thread = Thread(target=timer)
 timer_thread.start()
@@ -429,7 +449,6 @@ main_thread = Thread(target=main_loop)
 
 # запускаем главный поток
 main_thread.start()
-
 #root = Tk()
 
 #root.title("Автоотклики")
@@ -460,9 +479,11 @@ logger.info("Завершение работы программы")
 
 
 try:
+    sys.exit(0)
     sys_exit("Error: exiting the program")
     close_log_files()
     #root.destroy()
 except Exception as e:
     logger.info(f"Завершение жестко {e}")
+    sys.exit(0)
 #logger.info("Завершение работы программы2")

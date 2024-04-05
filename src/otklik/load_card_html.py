@@ -58,7 +58,12 @@ def load_card_html(url, driver, sql) -> tuple:
     html_otklik_param = ""
     all_text = ""
     id = get_id_from_url(url)
-    
+    if exists(f"log_texts/{id}.txt"):
+        if not exists("log_texts"):
+            makedirs("log_texts")
+        with open(f"log_texts/errors.txt", "a") as f:
+            f.write(f"{id}\n")
+        return "Error", html, html_choose, html_otklik_param, all_text, ban, limit
     if not get_page(driver, url):
         return "Error", html, html_choose, html_otklik_param, all_text, ban, limit
     #html = driver.page_source

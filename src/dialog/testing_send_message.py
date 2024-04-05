@@ -35,7 +35,7 @@ def send_text_with_shift_enter(text_area, text, max_length=900):
     :param logger: Логгер для записи действий.
     :param max_length: Максимальная длина одного сообщения.
     """
-    max_length = max_length - randint(0, 100)  # Добавляем случайное значение до 100 символов
+    max_length = max_length - randint(0, 200)  # Добавляем случайное значение до 100 символов
     # Разбиваем текст на предложения или блоки по точкам и переводам строк
     sentences = re.split(r'(?<=\.)\s|\n', text)
 
