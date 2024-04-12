@@ -68,6 +68,7 @@ def last_cards_check(number_of_cards: int, sql, driver: Chrome, cards_parsed, ot
                 update_students_data(card['url'], sql, "Allready", html, html_choose, html_otklik_param, all_text)
                 otklikov += 1
             elif result == "Error":
+                update_students_data(card['url'], sql, "error_zapoln", html, html_choose, html_otklik_param, all_text)
                 logger.info("Ошибка при заполнении %s", card['id'])
                 errors += 1
             elif result == "Nepodhodit":
@@ -150,6 +151,7 @@ def last_cards_check(number_of_cards: int, sql, driver: Chrome, cards_parsed, ot
                 update_students_data(row[0], sql, "Allready", html, html_choose, html_otklik_param, all_text)
             elif result == "Error":
                 errors += 1
+                update_students_data(row[0], sql, "error_card_html", html, html_choose, html_otklik_param, all_text)
                 logger.info("Ошибка см лог load_card_html %s", student_id)
             elif result == "Nepodhodit":
                 update_students_data(row[0], sql, "NePodhodit", html, html_choose, html_otklik_param, all_text)

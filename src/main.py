@@ -54,6 +54,9 @@ from utils.web_hook import WebhookSender
 
 from time_castom.castom_time_utils import get_sleep_time
 
+
+first_time_timout = 1 # 0 - не ждать при первом запуске, 1 - ждать
+
 def set_affinity(cores):
     """ Устанавливает аффинность (привязку) процесса к определенным ядрам. """
     pid = os.getpid()
@@ -69,6 +72,8 @@ cards_at_a_time = int(strings_dict["cards_at_a_time"])
 time_for_otklik = int(strings_dict["time_for_otklik"])
 scrolls = int(strings_dict["scrolls"])
 url2 = strings_dict["second_url"]
+
+
 
 form_width = 225
 form_height = 345
@@ -169,12 +174,18 @@ def main_loop():
     global scrolls
     global time_for_otklik
     global cards_at_a_time
+    global first_time_timout
     bots1 = TelegramBots(1)
     bots2 = TelegramBots(2)
     bots1.to_all_mine("Запустился бот %s" % start_time.strftime("%d.%m.%Y %H:%M:%S"),
                       False)
-    sleep_time = get_sleep_time()
-    time_to_sleep = sleep_time + randint(-120, 120)
+    if first_time_timout == 0:
+        first_time_timout = 1
+        sleep_time = 0
+        time_to_sleep = 20
+    else:
+        sleep_time = get_sleep_time()
+        time_to_sleep = sleep_time + randint(-120, 120)
     logger.info("Время до первого запуска: %s", time_to_sleep)
     sleep(time_to_sleep + randint(-10, 10))
     logger.info("Запуск главного цикла")
@@ -273,8 +284,9 @@ def main_loop():
                                 ostalos_otklikov = ostalos
                     except Exception as e:
                         logger.error(f"Ошибка получения осталось: {e}")
-                
-                bots2.to_developer(f"""Цикл: {str(ciklov)} \nОткликов: {str(otklikov)} \nВакансий: {str(vakansiy)} \nУдаленных: {str(deleted)} \nОшибок: {str(errors)}  \nНеподходящих: {str(nepodhodit)} \nЗабаненных: {str(banned)} \nЛимитов: {str(limited)} \nВремя: {str(datetime.now().strftime('%H:%M:%S'))}\nОсталось: {str(ostalos_otklikov)}""")
+                sleep_time = get_sleep_time()
+                time_to_sleep = max (0, int(sleep_time) + randint(-120, 120))
+                bots2.to_developer(f"""Цикл: {str(ciklov)} \nОткликов: {str(otklikov)} \nВакансий: {str(vakansiy)} \nУдаленных: {str(deleted)} \nОшибок: {str(errors)}  \nНеподходящих: {str(nepodhodit)} \nЗабаненных: {str(banned)} \nЛимитов: {str(limited)} \nВремя: {str(datetime.now().strftime('%H:%M:%S'))}\nОсталось: {str(ostalos_otklikov)}\nСпать: {str(time_to_sleep)}""")
                 with open ("last_update.txt", "w") as file:
                     file.write(str(datetime.now()))
                 last_time_otklik = time()
@@ -284,6 +296,8 @@ def main_loop():
                 my_driver_manager.reset()
                 
         except Exception as e:
+            sleep_time = get_sleep_time()
+            time_to_sleep = max (0, int(sleep_time) + randint(-120, 120))
             logger.error(e)
             some_errors += 1
             #app.state_label["text"] = "State: Error while working with cards..."
@@ -346,8 +360,7 @@ def main_loop():
         # обновляем значение числа на метке
         sql.close()
         #app.loops_number["text"] = str(ciklov)
-        sleep_time = get_sleep_time()
-        time_to_sleep = max (0, int(sleep_time) + randint(-120, 120))
+
         logger.info("Время до следующего запуска: %s", time_to_sleep)
         #time_of_continue = datetime.now() + timedelta(seconds=time_to_sleep)
         #app.state_label["text"] = "State: will continue in "
@@ -429,8 +442,215 @@ def main_loop():
 
 import signal
 
+def signal_explanation(sig):
+    """1) SIGHUP   2) SIGINT   3) SIGQUIT  4) SIGILL
+    5) SIGTRAP  6) SIGABRT  7) SIGBUS   8) SIGFPE
+    9) SIGKILL 10) SIGUSR1 11) SIGSEGV 12) SIGUSR2
+    13) SIGPIPE 14) SIGALRM 15) SIGTERM 16) SIGSTKFLT
+    17) SIGCHLD 18) SIGCONT 19) SIGSTOP 20) SIGTSTP
+    21) SIGTTIN 22) SIGTTOU 23) SIGURG  24) SIGXCPU
+    25) SIGXFSZ 26) SIGVTALRM   27) SIGPROF 28) SIGWINCH
+    29) SIGIO   30) SIGPWR  31) SIGSYS  34) SIGRTMIN
+    35) SIGRTMIN+1  36) SIGRTMIN+2  37) SIGRTMIN+3  38) SIGRTMIN+4
+    39) SIGRTMIN+5  40) SIGRTMIN+6  41) SIGRTMIN+7  42) SIGRTMIN+8
+    43) SIGRTMIN+9  44) SIGRTMIN+10 45) SIGRTMIN+11 46) SIGRTMIN+12
+    47) SIGRTMIN+13 48) SIGRTMIN+14 49) SIGRTMIN+15 50) SIGRTMAX-14
+    51) SIGRTMAX-13 52) SIGRTMAX-12 53) SIGRTMAX-11 54) SIGRTMAX-10
+    55) SIGRTMAX-9  56) SIGRTMAX-8  57) SIGRTMAX-7  58) SIGRTMAX-6
+    59) SIGRTMAX-5  60) SIGRTMAX-4  61) SIGRTMAX-3  62) SIGRTMAX-2
+    63) SIGRTMAX-1  64) SIGRTMAX 65) SIGPOLL  66) SIGLOST 67) SIGXFSZ 68) SIGXCPU"""
+    sig_num = {
+        1: "SIGHUP",
+        2: "SIGINT",
+        3: "SIGQUIT",
+        4: "SIGILL",
+        5: "SIGTRAP",
+        6: "SIGABRT",
+        7: "SIGBUS",
+        8: "SIGFPE",
+        9: "SIGKILL",
+       10: "SIGUSR1",
+       11: "SIGSEGV",
+       12: "SIGUSR2",
+       13: "SIGPIPE",
+       14: "SIGALRM",
+       15: "SIGTERM",
+       16: "SIGSTKFLT",
+       17: "SIGCHLD",
+       18: "SIGCONT",
+       19: "SIGSTOP",
+       20: "SIGTSTP",
+       21: "SIGTTIN",
+       22: "SIGTTOU",
+       23: "SIGURG",
+       24: "SIGXCPU",
+       25: "SIGXFSZ",
+       26: "SIGVTALRM",
+       27: "SIGPROF",
+       28: "SIGWINCH",
+       29: "SIGIO",
+       30: "SIGPWR",
+       31: "SIGSYS",
+       34: "SIGRTMIN",
+       35: "SIGRTMIN+1",
+       36: "SIGRTMIN+2",
+       37: "SIGRTMIN+3",
+       38: "SIGRTMIN+4",
+       39: "SIGRTMIN+5",
+       40: "SIGRTMIN+6",
+       41: "SIGRTMIN+7",
+       42: "SIGRTMIN+8",
+       43: "SIGRTMIN+9",
+       44: "SIGRTMIN+10",
+       45: "SIGRTMIN+11",
+       46: "SIGRTMIN+12",
+       47: "SIGRTMIN+13",
+       48: "SIGRTMIN+14",
+       49: "SIGRTMIN+15",
+       50: "SIGRTMAX-14",
+       51: "SIGRTMAX-13",
+       52: "SIGRTMAX-12",
+       53: "SIGRTMAX-11",
+       54: "SIGRTMAX-10",
+       55: "SIGRTMAX-9",
+       56: "SIGRTMAX-8",
+       57: "SIGRTMAX-7",
+       58: "SIGRTMAX-6",
+       59: "SIGRTMAX-5",
+       60: "SIGRTMAX-4",
+       61: "SIGRTMAX-3",
+       62: "SIGRTMAX-2",
+       63: "SIGRTMAX-1",
+       64: "SIGRTMAX",
+       65: "SIGPOLL",
+       66: "SIGLOST",
+       67: "SIGXFSZ",
+       68: "SIGXCPU"
+}
+
+    # sig_cases = {
+    #     signal.SIGINT: "Keyboard interrupt",
+    #     signal.SIGTERM: "Termination signal",
+    #     signal.SIGABRT: "Abnormal termination",
+    #     signal.SIGFPE: "Floating point exception",
+    #     signal.SIGILL: "Illegal instruction",
+    #     signal.SIGSEGV: "Segmentation fault",
+    #     signal.SIGPIPE: "Broken pipe",
+    #     signal.SIGALRM: "Alarm clock",
+    #     signal.SIGCHLD: "Child process terminated",
+    #     signal.SIGCONT: "Continue executing, if stopped",
+    #     signal.SIGTSTP: "Stop executing",
+    #     signal.SIGTTIN: "Background process attempting read",
+    #     signal.SIGTTOU: "Background process attempting write",
+    #     signal.SIGUSR1: "User-defined signal 1",
+    #     signal.SIGUSR2: "User-defined signal 2",
+    #     signal.SIGPOLL: "Pollable event",
+    #     signal.SIGPROF: "Profiling timer expired",
+    #     signal.SIGSYS: "Bad system call",
+    #     signal.SIGTRAP: "Trace/breakpoint trap",
+    #     signal.SIGURG: "High bandwidth data is available at a socket",
+    #     signal.SIGVTALRM: "Virtual timer expired",
+    #     signal.SIGXCPU: "CPU time limit exceeded",
+    #     signal.SIGXFSZ: "File size limit exceeded",
+    #     signal.SIGWINCH: "Window size change",
+    #     signal.SIGIO: "I/O now possible",
+    #     signal.SIGPWR: "Power failure restart",
+    #     signal.SIGINFO: "Status request from keyboard",
+    #     signal.SIGLOST: "File lock lost",
+    #     signal.SIGEMT: "EMT instruction",
+    #     signal.SIGSTKFLT: "Stack fault on coprocessor",
+    #     signal.SIGUNUSED: "Unused signal",
+    #     signal.SIGBUS: "Bus error",
+    #     signal.SIGKILL: "Kill signal",
+    #     signal.SIGSTOP: "Stop signal",
+    #     signal.SIGRTMIN: "Real-time signal",
+    #     signal.SIGRTMAX: "Real-time signal"
+    # }
+    sig_cases = {
+        1: "Hangup detected on controlling terminal or death of controlling process",
+        2: "Interrupt from keyboard",
+        3: "Quit from keyboard",
+        4: "Illegal Instruction",
+        5: "Trace/breakpoint trap",
+        6: "Abort signal from abort(3)",
+        7: "Bus error (bad memory access)",
+        8: "Floating-point exception",
+        9: "Kill signal",
+        10: "User-defined signal 1",
+        11: "Invalid memory reference",
+        12: "User-defined signal 2",
+        13: "Broken pipe: write to pipe with no readers",
+        14: "Timer signal from alarm(2)",
+        15: "Termination signal",
+        16: "Stack fault on coprocessor (unused)",
+        17: "Child stopped or terminated",
+        18: "Continue if stopped",
+        19: "Stop process",
+        20: "Stop typed at terminal",
+        21: "Terminal input for background process",
+        22: "Terminal output for background process",
+        23: "Urgent condition on socket (4.2BSD)",
+        24: "CPU time limit exceeded (4.2BSD)",
+        25: "File size limit exceeded (4.2BSD)",
+        26: "Virtual alarm clock (4.2BSD)",
+        27: "Profiling timer expired",
+        28: "Window resize signal (4.3BSD, Sun)",
+        29: "I/O now possible (4.2BSD)",
+        30: "Power failure (System V)",
+        31: "Bad system call",
+        34: "Real-time signal 0",
+        35: "Real-time signal 1",
+        36: "Real-time signal 2",
+        37: "Real-time signal 3",
+        38: "Real-time signal 4",
+        39: "Real-time signal 5",
+        40: "Real-time signal 6",
+        41: "Real-time signal 7",
+        42: "Real-time signal 8",
+        43: "Real-time signal 9",
+        44: "Real-time signal 10",
+        45: "Real-time signal 11",
+        46: "Real-time signal 12",
+        47: "Real-time signal 13",
+        48: "Real-time signal 14",
+        49: "Real-time signal 15",
+        50: "Real-time signal 16",
+        51: "Real-time signal 17",
+        52: "Real-time signal 18",
+        53: "Real-time signal 19",
+        54: "Real-time signal 20",
+        55: "Real-time signal 21",
+        56: "Real-time signal 22",
+        57: "Real-time signal 23",
+        58: "Real-time signal 24",
+        59: "Real-time signal 25",
+        60: "Real-time signal 26",
+        61: "Real-time signal 27",
+        62: "Real-time signal 28",
+        63: "Real-time signal 29",
+        64: "Real-time signal 30",
+        65: "Pollable event (Sys V). Synonym for SIGIO",
+        66: "File lock lost (unused)",
+        67: "File size limit exceeded",
+        68: "CPU time limit exceeded"
+    }
+
+    return f"{sig_num[sig]} - {sig_cases[sig]}"
+
 def signal_handler(sig, frame):
-    logger.info(f"Received signal: {sig}")
+    logger.warning(f"Received signal: {sig} witch is {str(frame)} {signal_explanation(sig)}")
+    try:
+        sender = WebhookSender()
+        data = {
+            'service': 'otklik',
+            'event': 'error',
+            'error': True,
+            'message': f"Received signal: {sig} witch is {str(frame)} {signal_explanation(sig)}"
+        }
+        response = sender.send_webhook(data)
+        logger.warning("Удалось отправить сообщение в телеграмм")
+    except Exception as e:
+        logger.error(f"Не удалось отправить сообщение в телеграмм: {e}")
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)

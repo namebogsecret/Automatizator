@@ -10,7 +10,7 @@ logger = set_logger(logger)
 def get_page(driver: Safari, url: str) -> bool:
     def load_url():
         driver.get(url)
-
+    logger.warning("Loading URL: %s", url)
     try:
         with ThreadPoolExecutor(max_workers=1) as executor:
             executor.submit(load_url).result(timeout=30)
