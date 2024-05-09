@@ -16,23 +16,23 @@ from random import randint
 from threading import Thread
 #import AppKit as appkit
 from time import sleep, time #strftime, gmtime, 
-from database.login_to_sql_server import login_to_sql_server
-from constants.pathes import db_path
-from otklik.last_cards_chek import last_cards_check
-from parsing_cards.update_all_cards import CardUpdater
-from logging import getLogger
-import log_scripts.set_logger
-from log_scripts.set_logger import set_logger
-from log_scripts.set_logger import logs_dir, archive_large_logs, archive_old_logs
-from webdriver.prepare_page import prepare_page
+# from database.login_to_sql_server import login_to_sql_server
+# from constants.pathes import db_path
+# from otklik.last_cards_chek import last_cards_check
+# from parsing_cards.update_all_cards import CardUpdater
+# from logging import getLogger
+# import log_scripts.set_logger
+# from log_scripts.set_logger import set_logger
+# from log_scripts.set_logger import logs_dir, archive_large_logs, archive_old_logs
+# from webdriver.prepare_page import prepare_page
 #from constants.pathes import stop_file
-from webdriver.scroll import scroll_down
+# from webdriver.scroll import scroll_down
 from gc import collect
 
 #from tkinter import Tk
 #from visual.form import App
 #from constants.pathes import stop_file
-from log_scripts.close_logs import close_log_files
+# from log_scripts.close_logs import close_log_files
 
 
 #from visual.form import App
@@ -40,13 +40,13 @@ from log_scripts.close_logs import close_log_files
 from constants.flags import flag
 #import telegram_bot.telegram_bot_get_id as bot
 from telegram_bot.telegram_send_note import TelegramBots
-from otklik.is_it_on_the_page import WebScraper
+# from otklik.is_it_on_the_page import WebScraper
 #from constants.dict import dict_otklik
-from sound.pik import pik
+# from sound.pik import pik
 #from constants.dicts_def import dicts
 #from utils.how_many_files import how_many_files
-from configuration.read_dictionaries_from_file import read_dictionaries_from_file
-import json
+# from configuration.read_dictionaries_from_file import read_dictionaries_from_file
+# import json
 import os
 from stata.get_ostalos import get_ostalos
 #from memory_profiler import profile
@@ -55,7 +55,7 @@ from utils.web_hook import WebhookSender
 from time_castom.castom_time_utils import get_sleep_time
 
 
-first_time_timout = 1 # 0 - не ждать при первом запуске, 1 - ждать
+first_time_timout = 0 # 0 - не ждать при первом запуске, 1 - ждать
 
 def set_affinity(cores):
     """ Устанавливает аффинность (привязку) процесса к определенным ядрам. """
@@ -63,22 +63,22 @@ def set_affinity(cores):
     os.sched_setaffinity(pid, cores)
 set_affinity([1])
 
-logger = getLogger(__name__)
-logger = set_logger(logger)
+# logger = getLogger(__name__)
+# logger = set_logger(logger)
 last_time_otklik = time()
-read_dictionaries_from_file('src/configuration/dictionaries_old.json')
+# read_dictionaries_from_file('src/configuration/dictionaries_old.json')
 strings_dict = read_strings_from_file()
-cards_at_a_time = int(strings_dict["cards_at_a_time"])
+# cards_at_a_time = int(strings_dict["cards_at_a_time"])
 time_for_otklik = int(strings_dict["time_for_otklik"])
-scrolls = int(strings_dict["scrolls"])
-url2 = strings_dict["second_url"]
+# scrolls = int(strings_dict["scrolls"])
+# url2 = strings_dict["second_url"]
 
 
 
 form_width = 225
 form_height = 345
 start_time = datetime.now()
-logger.info("Запуск программы в %s", start_time)
+# logger.info("Запуск программы в %s", start_time)
 #cards_at_a_time = 20
 #scrolls = 2
 
@@ -129,45 +129,45 @@ def timer():
         del time_passed
 #@profile
 
-class driver_manager():
-    def __init__(self, scrolls):
-        self._set_driver(scrolls)
-        self.scrolls = scrolls
+# class driver_manager():
+#     def __init__(self, scrolls):
+#         self._set_driver(scrolls)
+#         self.scrolls = scrolls
     
-    def check(self):
-        try:
-            self.driver.title
-            return True
-        except:
-            return False
+#     def check(self):
+#         try:
+#             self.driver.title
+#             return True
+#         except:
+#             return False
     
-    def get_driver(self, scrols = 0):
-        if self.check():
-            return self.driver
-        else:
-            return self._set_driver(scrols)
+#     def get_driver(self, scrols = 0):
+#         if self.check():
+#             return self.driver
+#         else:
+#             return self._set_driver(scrols)
 
-    def _set_driver(self, scrolls):
-        try:
-            self.driver, _ = prepare_page(scrolls)
-        except Exception as e:
-            logger.error(e)
-            self.driver = None
-        if self.check():
-            return self.driver
-        else:
-            return None
+#     def _set_driver(self, scrolls):
+#         try:
+#             self.driver, _ = prepare_page(scrolls)
+#         except Exception as e:
+#             logger.error(e)
+#             self.driver = None
+#         if self.check():
+#             return self.driver
+#         else:
+#             return None
 
-    def reset(self,scrolls=0):
-        self.delete()
-        return self._set_driver(scrolls)
+#     def reset(self,scrolls=0):
+#         self.delete()
+#         return self._set_driver(scrolls)
     
-    def delete(self):
-        try:
-            self.driver.close()
-        except Exception:
-            pass
-        self.driver = None
+#     def delete(self):
+#         try:
+#             self.driver.close()
+#         except Exception:
+#             pass
+#         self.driver = None
 
 def main_loop():
     global last_time_otklik
@@ -186,12 +186,12 @@ def main_loop():
     else:
         sleep_time = get_sleep_time()
         time_to_sleep = sleep_time + randint(-120, 120)
-    logger.info("Время до первого запуска: %s", time_to_sleep)
+    # logger.info("Время до первого запуска: %s", time_to_sleep)
     sleep(time_to_sleep + randint(-10, 10))
-    logger.info("Запуск главного цикла")
+    # logger.info("Запуск главного цикла")
     #app.state_label["text"] = "State: Preparing page..."
-    my_driver_manager = driver_manager(scrolls)
-    driver = my_driver_manager.get_driver()
+    # my_driver_manager = driver_manager(scrolls)
+    # driver = my_driver_manager.get_driver()
     #root.geometry(f"+{int(x_coordinata)}+{int(0)}")
     #Сделать перелогинивание!!!!!
     ciklov = 0
@@ -211,59 +211,60 @@ def main_loop():
     global dicts
     ostalos_otklikov = 50
 
-    if poluchat_li_ostalos == 1:
-        try:
+    # if poluchat_li_ostalos == 1:
+    #     try:
 
-            if 0 <= datetime.now().minute <= 5:
-                ostalos = get_ostalos(my_driver_manager.get_driver())
-                sleep(20+randint(-5, 5))
-                if not ostalos:
-                    logger.error("Не удалось получить осталось")
-                else:
-                    ostalos_otklikov = ostalos
-        except Exception as e:
-            logger.error(f"Ошибка получения осталось: {e}")
+    #         if 0 <= datetime.now().minute <= 5:
+    #             ostalos = get_ostalos(my_driver_manager.get_driver())
+    #             sleep(20+randint(-5, 5))
+    #             if not ostalos:
+    #                 logger.error("Не удалось получить осталось")
+    #             else:
+    #                 ostalos_otklikov = ostalos
+    #     except Exception as e:
+    #         logger.error(f"Ошибка получения осталось: {e}")
     while not flag.stop:
         timer_start = time()
-        archive_old_logs(logs_dir)
-        archive_large_logs(logs_dir)
-        if read_dictionaries_from_file('src/configuration/dictionaries_old.json'):
-            logger.info("Словари обновлены")
-        else:
-            logger.error("Не удалось обновить словари")
+        # archive_old_logs(logs_dir)
+        # archive_large_logs(logs_dir)
+        # if read_dictionaries_from_file('src/configuration/dictionaries_old.json'):
+        #     logger.info("Словари обновлены")
+        # else:
+        #     logger.error("Не удалось обновить словари")
         ciklov += 1
-        logger.info("-----начался цикл %s ------", ciklov)
+        # logger.info("-----начался цикл %s ------", ciklov)
         #app.state_label["text"] = "State: Opening sql..."
-        sql = login_to_sql_server()
-        if sql is None:
-            logger.error("Не удалось подключиться к базе данных")
-            return None
+        # sql = login_to_sql_server()
+        # if sql is None:
+        #     logger.error("Не удалось подключиться к базе данных")
+        #     return None
         
-        cardupdater = CardUpdater(my_driver_manager.get_driver(),sql )
+        # cardupdater = CardUpdater(my_driver_manager.get_driver(),sql )
         #app.state_label["text"] = "State: trying to work with cards..."
         delta = 0
         delta_otkl = 0
         #sleep(0.2)
         try:
             #app.state_label["text"] = "State: Updating cards..."
-            cards_parsed = cardupdater.update_all_cards()
-            logger.info("Карточки обновлены")
+            # cards_parsed = cardupdater.update_all_cards()
+            # logger.info("Карточки обновлены")
             #lookup_deleted(cards_parsed,sql)
-            if cards_parsed != []:
+            
+            if True:
                 #app.state_label["text"] = "State: Checking last cards..."
-                logger.info("Проверка последних карточек")
-                o1, v1, d1, e1, n1, b1, l1 = last_cards_check(cards_at_a_time, sql,
-                                                              my_driver_manager.get_driver(), cards_parsed,
-                                                              otklikov, vakansiy,
-                                                              deleted, errors,
-                                                              nepodhodit, banned,
-                                                              limited)
-                logger.info("Последние карточки проверены")
-                delta = max (o1 - otklikov, v1 - vakansiy, d1 - deleted,
-                             e1 - errors, n1 - nepodhodit, b1 - banned, l1 - limited)
-                delta_otkl = o1 - otklikov
+                # logger.info("Проверка последних карточек")
+                # o1, v1, d1, e1, n1, b1, l1 = last_cards_check(cards_at_a_time, sql,
+                #                                               my_driver_manager.get_driver(), cards_parsed,
+                #                                               otklikov, vakansiy,
+                #                                               deleted, errors,
+                #                                               nepodhodit, banned,
+                #                                               limited)
+                # logger.info("Последние карточки проверены")
+                # delta = max (o1 - otklikov, v1 - vakansiy, d1 - deleted,
+                #              e1 - errors, n1 - nepodhodit, b1 - banned, l1 - limited)
+                # delta_otkl = o1 - otklikov
                 
-                otklikov, vakansiy, deleted, errors, nepodhodit, banned, limited = o1, v1, d1, e1, n1, b1, l1
+                # otklikov, vakansiy, deleted, errors, nepodhodit, banned, limited = o1, v1, d1, e1, n1, b1, l1
                 """app.sent_number["text"] = str(otklikov)
                 app.vakansii_number["text"] = str(vakansiy)
                 app.delete_number["text"] = str(deleted)
@@ -272,33 +273,37 @@ def main_loop():
                 app.banned_number["text"] = str(banned)
                 app.limited_number["text"] = str(limited)"""
 
-                if poluchat_li_ostalos == 1:
-                    #если сейчас время от 0 до 5 минут каждый час, то отправляем статистику
-                    try:
-                        if 0 <= datetime.now().minute <= 5:
-                            ostalos = get_ostalos(my_driver_manager.get_driver())
-                            sleep(10 + randint(-3, 3))
-                            if not ostalos:
-                                logger.error("Не удалось получить осталось")
-                            else:
-                                ostalos_otklikov = ostalos
-                    except Exception as e:
-                        logger.error(f"Ошибка получения осталось: {e}")
+                # if poluchat_li_ostalos == 1:
+                #     #если сейчас время от 0 до 5 минут каждый час, то отправляем статистику
+                #     try:
+                #         if 0 <= datetime.now().minute <= 5:
+                #             ostalos = get_ostalos(my_driver_manager.get_driver())
+                #             sleep(10 + randint(-3, 3))
+                #             if not ostalos:
+                #                 logger.error("Не удалось получить осталось")
+                #             else:
+                #                 ostalos_otklikov = ostalos
+                #     except Exception as e:
+                #         logger.error(f"Ошибка получения осталось: {e}")
                 sleep_time = get_sleep_time()
                 time_to_sleep = max (0, int(sleep_time) + randint(-120, 120))
-                bots2.to_developer(f"""Цикл: {str(ciklov)} \nОткликов: {str(otklikov)} \nВакансий: {str(vakansiy)} \nУдаленных: {str(deleted)} \nОшибок: {str(errors)}  \nНеподходящих: {str(nepodhodit)} \nЗабаненных: {str(banned)} \nЛимитов: {str(limited)} \nВремя: {str(datetime.now().strftime('%H:%M:%S'))}\nОсталось: {str(ostalos_otklikov)}\nСпать: {str(time_to_sleep)}""")
+                #bots1.rassilka(f"Проверь профи ру. next after {str(time_to_sleep)}")
+                # плюс один час
+                nex_time_will_be_at = datetime.now() + timedelta(seconds=time_to_sleep) + timedelta(hours=1)
+                bots1.rassilka(f"Проверь профи ру. Следующий запуск в {str(nex_time_will_be_at.strftime('%H:%M:%S'))}")
+                # bots2.to_developer(f"""Цикл: {str(ciklov)} \nОткликов: {str(otklikov)} \nВакансий: {str(vakansiy)} \nУдаленных: {str(deleted)} \nОшибок: {str(errors)}  \nНеподходящих: {str(nepodhodit)} \nЗабаненных: {str(banned)} \nЛимитов: {str(limited)} \nВремя: {str(datetime.now().strftime('%H:%M:%S'))}\nОсталось: {str(ostalos_otklikov)}\nСпать: {str(time_to_sleep)}""")
                 with open ("last_update.txt", "w") as file:
                     file.write(str(datetime.now()))
                 last_time_otklik = time()
             else:
-                logger.error("Нет новых карточек none ")
+                # logger.error("Нет новых карточек none ")
                 some_errors += 1
-                my_driver_manager.reset()
+                # my_driver_manager.reset()
                 
         except Exception as e:
             sleep_time = get_sleep_time()
             time_to_sleep = max (0, int(sleep_time) + randint(-120, 120))
-            logger.error(e)
+            # logger.error(e)
             some_errors += 1
             #app.state_label["text"] = "State: Error while working with cards..."
             sender = WebhookSender()
@@ -309,20 +314,20 @@ def main_loop():
                 'message': f"Ошибка при обновлении карточек {e}"
             }
             response = sender.send_webhook(data)
-            logger.error("Не удалось обновить карточки")
-            my_driver_manager.reset() 
+            # logger.error("Не удалось обновить карточки")
+            # my_driver_manager.reset() 
         if some_errors > 5:
-            logger.error("Слишком много ошибок")
+            # logger.error("Слишком много ошибок")
             bots1.rassilka("""Больше 5 ошибок, возможно требуется внимание""")
             some_errors = 0
             is_it_critical += 1
             if is_it_critical > 5:
-                logger.error("Слишком много критических ошибок")
+                # logger.error("Слишком много критических ошибок")
                 bots1.rassilka("""3 критических ошибки, пробуем перезапустить бота""")
                 # Завершение программы
                 sys_exit("Error: too many critical errors, trying to restart the bot")
 
-        logger.info(f"-----идет цикл {ciklov} ------")
+        # logger.info(f"-----идет цикл {ciklov} ------")
         timer_stop = time()
         #driver.save_screenshot(f"screenshot_{timer_stop}.png")
         strings_dict = read_strings_from_file()
@@ -331,37 +336,38 @@ def main_loop():
         proshlo_vremeni = timer_stop - timer_start
         if not flag.stop and delta > 0 and delta_otkl == 0 and proshlo_vremeni < time_for_otklik:
             try:
-                my_driver_manager.get_driver().get(url2)
+                # my_driver_manager.get_driver().get(url2)
                 strings_dict = read_strings_from_file()
                 scrolls = int(strings_dict["scrolls"])
-                scroll_down(my_driver_manager.get_driver(), scrolls)
+                # scroll_down(my_driver_manager.get_driver(), scrolls)
                 #app.state_label["text"] = "State: Main page opening..."
                 sleep(60 + randint(-20, 20))
-                cardupdater = CardUpdater(my_driver_manager.get_driver(),sql )
-                cardupdater.update_all_cards()
-                ws = WebScraper(my_driver_manager.get_driver(), "dict_otklik")
-                new_messages = ws.is_it_on_the_page("new_messages")
-                if new_messages:
-                    number_of_messages = new_messages.text
-                    #app.state_label["text"] = f"Have new messages:
-                    # {number_of_messages}"
-                    bots1.rassilka(f"Новые сообщения: {number_of_messages}", False)
-                    logger.info(f"Have new messages: {number_of_messages}")
-                    """for tri_pika in range(3):
-                        pik(4000)
-                        sleep(0.5)"""
+                # cardupdater = CardUpdater(my_driver_manager.get_driver(),sql )
+                # cardupdater.update_all_cards()
+                # ws = WebScraper(my_driver_manager.get_driver(), "dict_otklik")
+                # new_messages = ws.is_it_on_the_page("new_messages")
+                # if new_messages:
+                #     number_of_messages = new_messages.text
+                #     #app.state_label["text"] = f"Have new messages:
+                #     # {number_of_messages}"
+                #     bots1.rassilka(f"Новые сообщения: {number_of_messages}", False)
+                #     # logger.info(f"Have new messages: {number_of_messages}")
+                #     """for tri_pika in range(3):
+                #         pik(4000)
+                #         sleep(0.5)"""
             except Exception as e:
-                logger.error(e)
-                logger.error("Не удалось перейти на страницу https://repetitors.info/backoffice/n.php")
+                print(e)
+                # logger.error(e)
+                # logger.error("Не удалось перейти на страницу https://repetitors.info/backoffice/n.php")
                 
         #app.state_label["text"] = "State: closing sql..."
         # if delta_otkl > 0:
         #     flag.update_now = True
         # обновляем значение числа на метке
-        sql.close()
+        # sql.close()
         #app.loops_number["text"] = str(ciklov)
 
-        logger.info("Время до следующего запуска: %s", time_to_sleep)
+        # logger.info("Время до следующего запуска: %s", time_to_sleep)
         #time_of_continue = datetime.now() + timedelta(seconds=time_to_sleep)
         #app.state_label["text"] = "State: will continue in "
         # + str(time_of_continue.strftime("%H:%M:%S")) + " seconds"
@@ -387,54 +393,55 @@ def main_loop():
             cards_at_a_time = int(strings_dict["cards_at_a_time"])
             time_for_otklik = int(strings_dict["time_for_otklik"])
             try:
-                my_driver_manager.get_driver().get(url2)
+                # my_driver_manager.get_driver().get(url2)
                 strings_dict = read_strings_from_file()
                 scrolls = int(strings_dict["scrolls"])
-                scroll_down(my_driver_manager.get_driver(), scrolls)
+                # scroll_down(my_driver_manager.get_driver(), scrolls)
                 #app.state_label["text"] = "State: Main page opening..."
                 sleep(20 + randint(-3, 3))
                 #scroll_down(my_driver_manager.get_driver(), 2)
-                ws = WebScraper(my_driver_manager.get_driver(), "dict_otklik")
-                new_messages = ws.is_it_on_the_page("new_messages")
-                if new_messages:
-                    number_of_messages = new_messages.text
-                    #app.state_label["text"] = f"Have new messages:
-                    # {number_of_messages}"
-                    bots1.rassilka(f"Новые сообщения: {number_of_messages}", False)
-                    logger.info(f"Have new messages: {number_of_messages}")
-                    for tri_pika in range(3):
-                        pik(3000)
-                else:
-                    #app.state_label["text"] = "State: No new messages"
-                    logger.info("No new messages")
+                # ws = WebScraper(my_driver_manager.get_driver(), "dict_otklik")
+                # new_messages = ws.is_it_on_the_page("new_messages")
+                # if new_messages:
+                #     number_of_messages = new_messages.text
+                #     #app.state_label["text"] = f"Have new messages:
+                #     # {number_of_messages}"
+                #     bots1.rassilka(f"Новые сообщения: {number_of_messages}", False)
+                #     # logger.info(f"Have new messages: {number_of_messages}")
+                #     for tri_pika in range(3):
+                #         pik(3000)
+                # else:
+                #     pass
+                #     #app.state_label["text"] = "State: No new messages"
+                #     # logger.info("No new messages")
                 sleep(2 + randint(-1, 1))
             except Exception as e:
-                logger.error(e)
-                logger.error("Не удалось перейти на страницу https://repetitors.info/backoffice/n.php")
-                logger.info("Закрытие и сохранение соединения с базой данных")
+                # logger.error(e)
+                # logger.error("Не удалось перейти на страницу https://repetitors.info/backoffice/n.php")
+                # logger.info("Закрытие и сохранение соединения с базой данных")
                 #app.state_label["text"] =
                 # "State: Error while opening main page, reloading..."
                 sleep(10 + randint(-2, 2))
                 continue
 
-        logger.info("Закрытие и сохранение соединения с базой данных")
+        # logger.info("Закрытие и сохранение соединения с базой данных")
         #how_many_files()
                 # Save cookies to a file
-        logger.info("Сохранение cookies в файл")
-        try:
-            with open('cookies.txt', 'w') as file:
-                json.dump(my_driver_manager.get_driver().get_cookies(), file)
-        except Exception as e:
-            logger.error(e)
-            logger.error("Не удалось сохранить cookies в файл")
-        logger.info("-----закончился цикл %s ------", ciklov)
+        # logger.info("Сохранение cookies в файл")
+        # try:
+        #     with open('cookies.txt', 'w') as file:
+        #         json.dump(my_driver_manager.get_driver().get_cookies(), file)
+        # except Exception as e:
+        #     logger.error(e)
+        #     logger.error("Не удалось сохранить cookies в файл")
+        # logger.info("-----закончился цикл %s ------", ciklov)
         flag.update_now = False
 
         
     # Закрытие экземпляра драйвера
     
     #app.state_label["text"] = "State: Closing driver..."
-    my_driver_manager.delete()
+    # my_driver_manager.delete()
     bots1.to_all_mine("Бот выключается %s" % start_time.strftime("%d.%m.%Y %H:%M:%S"),
                       False)
 
@@ -638,7 +645,7 @@ def signal_explanation(sig):
     return f"{sig_num[sig]} - {sig_cases[sig]}"
 
 def signal_handler(sig, frame):
-    logger.warning(f"Received signal: {sig} witch is {str(frame)} {signal_explanation(sig)}")
+    # logger.warning(f"Received signal: {sig} witch is {str(frame)} {signal_explanation(sig)}")
     try:
         sender = WebhookSender()
         data = {
@@ -648,9 +655,10 @@ def signal_handler(sig, frame):
             'message': f"Received signal: {sig} witch is {str(frame)} {signal_explanation(sig)}"
         }
         response = sender.send_webhook(data)
-        logger.warning("Удалось отправить сообщение в телеграмм")
+        # logger.warning("Удалось отправить сообщение в телеграмм")
     except Exception as e:
-        logger.error(f"Не удалось отправить сообщение в телеграмм: {e}")
+        pass
+        # logger.error(f"Не удалось отправить сообщение в телеграмм: {e}")
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
@@ -695,7 +703,7 @@ if len(screens) > 1:
 #app.mainloop()
 #logger.info("Завершение работы графического интерфейса")
 main_thread.join()
-logger.info("Завершение работы программы")
+# logger.info("Завершение работы программы")
 
 
 try:
@@ -704,6 +712,6 @@ try:
     close_log_files()
     #root.destroy()
 except Exception as e:
-    logger.info(f"Завершение жестко {e}")
+    # logger.info(f"Завершение жестко {e}")
     sys.exit(0)
 #logger.info("Завершение работы программы2")
