@@ -1,10 +1,10 @@
 #/src/time/get_real_datetime.py
 from datetime import datetime, timedelta
-from logging import getLogger
-from log_scripts.set_logger import set_logger
+#from logging import getLogger
+#from log_scripts.set_logger import set_logger
 # logger setup
-logger = getLogger(__name__)
-logger = set_logger(logger)
+#logger = getLogger(__name__)
+#logger = set_logger(logger)
 
 def get_real_datetime(relative_time : str):
     # Проверяем, если значение "Вчера"
@@ -76,7 +76,7 @@ def get_real_datetime(relative_time : str):
         return dt.strftime('%d.%m.%Y %H:%M'), int(dt.timestamp())
 
 def main():
-    """print(get_real_datetime("1 секунду назад"))
+    print(get_real_datetime("1 секунду назад"))
     print(get_real_datetime("5 минут назад"))
     print(get_real_datetime("2 часа назад"))
     print(get_real_datetime("14 часов назад"))
@@ -92,7 +92,8 @@ def main():
     print(get_real_datetime("1 сентября в 12:00"))
     print(get_real_datetime("11 октября в 12:00"))
     print(get_real_datetime("1 ноября в 12:00"))
-    print(get_real_datetime("1 декабря в 12:00"))"""
+    print(get_real_datetime("1 декабря в 12:00"))
+    print(get_real_datetime("01 января в 01:00"))
 
 if __name__ == "__main__":
     main()

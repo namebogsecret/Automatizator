@@ -30,6 +30,8 @@ def set_option(options):
     return options
 
 def prepare_page(scrolldown: int = 5):
+    global CAPTCHA_IS_SOLVED
+    CAPTCHA_IS_SOLVED = False
     strings_dict = read_strings_from_file()
     url2 = strings_dict["second_url"]
     base_url = strings_dict["second_base_url"]
@@ -69,16 +71,22 @@ def prepare_page(scrolldown: int = 5):
         chrome_options.add_argument("--disable-dev-shm-usage")
         #chrome_driver_path = "/usr/local/bin/chromedriver"
         chrome_options.binary_location = "/usr/bin/google-chrome"
+        # Настройка логирования
+        service = Service("/root/Automatizator/chromedriver")
+        service.log_path = 'chromedriver.log'  # Указываем файл для логов
+        service.enable_verbose_logging = True  # Включаем подробное логирование
 
         chrome_driver_path = "/usr/local/bin/chromedriver"
         logger.info("Инициализация драйвера Selenium, используя браузер Chrome")
-        driver = Chrome(options=chrome_options)
+        driver = Chrome(service=service, options=chrome_options)
+        driver.set_page_load_timeout(600)
     elif my_driver == "safari":
         # Задаем уникальный идентификатор окна Safari
         options = SafariOptions()
         #options.set_capability('safari.initialUrl', 'profi_fucker')
         options = set_option(options)
         driver = Safari(options=options)
+        driver.set_page_load_timeout(600)
     else:
         if my_driver != "firefox":
             logger.warning("Драйвер не найден, пробуем firefox")
@@ -86,14 +94,15 @@ def prepare_page(scrolldown: int = 5):
         options = set_option(options)
         #gecko_driver_path = "/Volumes/Untitled/Automatizator/geckodriver"
         driver = Firefox(options=options)
+        driver.set_page_load_timeout(600)
 
     #driver.implicitly_wait(10)
     # Получение высоты экрана
-    driver.set_window_position(1440,0)
+    driver.set_window_position(0,0)
     #driver.maximize_window()
     height = driver.execute_script("return window.screen.availHeight")
     # Установка размера окна браузера по вертикали
-    driver.set_window_size(height/2, height-50)
+    driver.set_window_size(700, 1000)
     #devtools = driver.create_devtools_session()
 
     # Переход на URL-адрес
@@ -105,13 +114,19 @@ def prepare_page(scrolldown: int = 5):
             with open('cookies.txt', 'r') as file:
                 content = file.read()
                 if content:  # Проверяем, не пустой ли файл
-                    cookies = json.loads(content)
-                    for cookie in cookies:
-                        driver.add_cookie(cookie)
+                    try:
+                        cookies = json.loads(content)
+                        for cookie in cookies:
+                            driver.add_cookie(cookie)
+                        logger.info("Cookies загружены")
+                    except Exception as e:
+                        logger.warning(f"Ошибка при загрузке cookies: {e}")
                 else:
                     logger.info("Cookies file is empty!")
+        sleep(10+5*random())
+        logger.info(f"geting page {url2}")
         driver.get(url2)
-
+        logger.info("got page")
         # Save cookies to a file
         with open('cookies.txt', 'w') as file:
             json.dump(driver.get_cookies(), file)
@@ -178,4 +193,5 @@ def prepare_page(scrolldown: int = 5):
     # Прокрутка страницы 35 раз
     scroll_down(driver, scrolldown)
     logger.info("Страница готова к парсингу")
+    CAPTCHA_IS_SOLVED = True
     return driver, 1440 + height/2

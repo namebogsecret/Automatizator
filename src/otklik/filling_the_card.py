@@ -17,6 +17,7 @@ from gpt.gpt import gpt
 #from constants.texts import answer1
 #from configuration.read_strings_from_file import read_strings_from_file
 #from pyperclip import copy, paste
+import os
 """import pyautogui
 
 # Нажимаем сочетание клавиш Command + V
@@ -25,100 +26,146 @@ pyautogui.hotkey('command', 'v')"""
 logger = getLogger(__name__)
 logger = set_logger(logger)
 
-def filling_the_card(driver: Safari, id: str, all_text:str, w3: WebScraper, all_text_to_gpt_with_numbers, sql) -> bool:    
+# Кастомное исключение для GPT
+class GPTException(Exception):
+    pass
 
-    logger.info("Заполнение формы отклика на карточке %s", id)
+def write_to_log_file(text, id, main=False, naputstvie=False):
+    if not os.path.exists("log_texts"):
+        os.mkdir("log_texts")
+    file_name = f"log_texts/{id}.txt"
+    if main:
+        file_name = f"log_texts/{id}_main.txt"
+    if naputstvie:
+        file_name = f"log_texts/{id}_naputstvie.txt"
+    with open(file_name, "a") as f:
+        f.write(f"{text}\n")
+
+def fill_text_field(id, texteria, text_gpt, driver):
+    try:
+        driver.execute_script("arguments[0].value = arguments[1];", texteria, text_gpt)
+        write_to_log_file("1", id)
+        sleep(17 + randint(-3, 3))
+        texteria.send_keys(" ")
+        write_to_log_file("2", id)
+        #logger.info(f"Отклик заполнен gpt на карточке {id}")
+        return True
+    except Exception as e:
+        write_to_log_file(f"3 {e}", id)
+        #logger.warning(f"Не удалось вставить текст от GPT: {e}")
+        return False
+
+def process_card(id, w3, all_text, all_text_to_gpt_with_numbers, sql, driver):
+    texteria = w3.is_it_on_the_page("textarea")
+    write_to_log_file("0", id)
+    if not texteria:
+        write_to_log_file("4", id)
+        logger.error(f"Не найден элемент textarea на карточке {id}")
+        write_to_log_file("5", id)
+        return False, None, None, None, None
+    
+    try:
+        if os.path.exists(f"log_texts/{id}_main.txt") and os.path.exists(f"log_texts/{id}_naputstvie.txt"):
+            with open(f"log_texts/{id}_main.txt", "r") as f:
+                this_text = f.read()
+            with open(f"log_texts/{id}_naputstvie.txt", "r") as f:
+                naputstvie = f.read()
+            if fill_text_field(id, texteria, naputstvie, driver):
+                write_to_log_file("68", id)
+                return True, this_text, "", "", ""
+            else:
+                write_to_log_file("69", id)
+                return False, None, None, None, None
+        privetstvie, midle_text, distant_advertasing, proshanie, naputstvie = gpt(all_text, id, all_text_to_gpt_with_numbers, timeout=240, sql=sql)
+        write_to_log_file(naputstvie, id, naputstvie=True)
+        write_to_log_file(f"""{privetstvie}
+{midle_text}
+{distant_advertasing}
+{proshanie}""", id, main=True)
+        if privetstvie is None:
+            write_to_log_file("7", id)
+            raise GPTException("Не удалось получить текст от GPT")
+        
+        if fill_text_field(id, texteria, naputstvie, driver):
+            write_to_log_file("8", id)
+            return True, privetstvie, midle_text, distant_advertasing, proshanie
+
+    except (GPTException, Exception) as e:
+        #logger.warning(f"Не удалось получить текст от GPT на карточке {id}. Ошибка: {e}") #Ошибка: 'str' object has no attribute 'get'
+        write_to_log_file(f"9 {e}", id)
+        # Процесс автоотклика, если GPT не сработал
+        avtootklik = w3.is_it_on_the_page("first_avtootklik")
+        if avtootklik:
+            write_to_log_file("10", id)
+            try:
+                texteria.clear()
+                write_to_log_file("11", id)
+                click(avtootklik, driver, buttomtype="otklik1")
+                write_to_log_file("12", id)
+                #logger.info(f"Выбран автоотклик на карточке {id}")
+                return True, privetstvie,  midle_text, distant_advertasing, proshanie
+            except Exception as e:
+                write_to_log_file(f"13 {e}", id)
+                #print(e)
+                #logger.warning(f"Не удалось выбрать автоотклик на карточке {id}. Ошибка: {e}")
+
+        #logger.error(f"Не удалось обработать карточку {id}")
+        return False, None, None, None, None
+
+
+def filling_the_card(driver: Safari, id: str, all_text:str, w3: WebScraper, all_text_to_gpt_with_numbers, sql) -> bool:    
+    naputstvie = None
+    #logger.info("Заполнение формы отклика на карточке %s", id)
     # textarea заполняется через js
     actions = ActionChains(driver)
+    write_to_log_file("00", id)
+    card_processed, privetstvie, midle_text, distant_advertasing, proshanie = process_card(id, w3, all_text, all_text_to_gpt_with_numbers, sql, driver)
+    write_to_log_file("000", id)
+    if not card_processed:
+        write_to_log_file("0000", id)
+        return False, None, None, None, None
     
-    
-    #logger.error("Не удалось найти автоотклик на карточке %s", id)
-    texteria = w3.is_it_on_the_page("textarea")
-    if texteria:
-        text_gpt = ""
-        
-        try:
-            text_gpt = gpt(all_text, id,all_text_to_gpt_with_numbers, timeout=240, sql = sql)
-            #text_gpt =chouse_avtootklik_text("text")
-            if text_gpt is None:
-                raise Exception("Не удалось получить текст от gpt")
-                #return False                                                                #!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            pik()
-            sleep(2)
-            driver.execute_script("arguments[0].value = arguments[1];", texteria, text_gpt)
-            
-            sleep(2)
-            texteria.send_keys(" ")
-            logger.info("Отклик заполнен gpt на карточке %s", id)
-        except Exception as e:
-            avtootklik = w3.is_it_on_the_page("first_avtootklik")
-            logger.warning("Не удалось получить текст от gpt на карточке %s Error %s", id, e)
-            if avtootklik:
-                try:
-                    driver.execute_script("arguments[0].focus();", avtootklik)
-                    sleep(0.2)
-                    click(avtootklik, driver, buttomtype="otklik1")
-                    #actions.move_to_element(avtootklik).perform()
-                    #avtootklik.send_keys(Keys.RETURN)
-                    #avtootklik.click()
-                    logger.info("Выбран автоотклик на карточке %s", id)
-                except Exception as e:
-                    logger.warning("Не удалось выбрать автоотклик на карточке %s Error %s", id, e)
-                    try:
-                        texteria.send_keys(chouse_avtootklik_text("text"))
-                        logger.info("Отклик заполнен через js на карточке %s", id)
-                    except Exception as e:
-                        logger.error("Не удалось найти автоотклик на карточке%s", id)
-                        return False
-            else:
-                try:
-                    texteria.send_keys(chouse_avtootklik_text("text"))
-                    logger.info("Отклик заполнен через js на карточке %s", id)
-                except Exception as _:
-                    logger.error("Не удалось найти автоотклик на карточке%s", id)
-                    return False
-
-    
-    
-    sleep(0.5 + random())
-    logger.info("Выбор цены на карточке %s", id)
+    sleep(0.9 + random())
+    #logger.info("Выбор цены на карточке %s", id)
     price_conteiner = w3.is_it_on_the_page("price_conteiner2")
+    write_to_log_file("00000", id)
     if not price_conteiner:
+        write_to_log_file("000000", id)
         logger.error("Не удалось найти контейнер цены на карточке %s", id)
-        return False
+        return False, None, None, None, None
     w4 = WebScraper(price_conteiner, "dict_otklik")
     price_input = w4.is_it_on_the_page("price_input")
     div_price_dur = w3.is_it_on_the_page("duration_chois_conteiner")
     
     if not price_input or not div_price_dur:
         logger.error("Не удалось найти поле цены %s или продолжительности %s на карточке %s", str(price_input), str(div_price_dur), id)
-        return False
+        return False, None, None, None, None
     if price_input.get_attribute("value") == "6000":
-        logger.info("Цена уже заполнена на карточке %s", id)
-        return True
+        #logger.info("Цена уже заполнена на карточке %s", id)
+        return True, privetstvie, midle_text, distant_advertasing, proshanie
     #scroll_down(driver, 1, 2000)
     driver.execute_script("arguments[0].scrollIntoView();", price_input)
     #actions.move_to_element(price_input).perform()
     #price_input.click()
     price_input.send_keys("6000")
-    logger.info("Цена заполнена на карточке %s", id)
+    #logger.info("Цена заполнена на карточке %s", id)
     driver.execute_script("arguments[0].focus();", div_price_dur)
-    sleep(0.1)
+    sleep(0.3 + random())
     driver.execute_script("arguments[0].scrollIntoView();", div_price_dur)
     actions.move_to_element(div_price_dur).perform()
     div_price_dur.click()
-    logger.info("Контейнер продолжительности найден на карточке %s", id)
-    logger.info("Выбор продолжительности на карточке %s", id)
-    sleep(1.5 + random())
+    #logger.info("Контейнер продолжительности найден на карточке %s", id)
+    #logger.info("Выбор продолжительности на карточке %s", id)
+    sleep(1.7 + random())
     w5 = WebScraper(driver, "dict_otklik")
     p_90 = w5.is_it_on_the_page("duration_90")
     if not p_90:
-        logger.error("Не удалось найти продолжительность на карточке %s", id)
-        return False
+        #logger.error("Не удалось найти продолжительность на карточке %s", id)
+        return False, None, None, None, None
     driver.execute_script("arguments[0].focus();", p_90)
-    sleep(0.1)
+    sleep(0.3 + random())
     
     actions.move_to_element(p_90).perform()
     p_90.click()
-    logger.info("Все заполнено на карточке %s", id)    
-    return True
+    #logger.info("Все заполнено на карточке %s", id)    
+    return True, privetstvie, midle_text, distant_advertasing, proshanie

@@ -1,15 +1,24 @@
-from sqlite3 import Connection, Error, connect
-from typing import Any
 
-def add_message(conn: Connection, uchenik_id: int, answer_text: str, timestamp: float, dur: float, temp:float) -> None:
+from logging import getLogger
+from typing import Any
+import psycopg2
+from log_scripts.set_logger import set_logger
+
+# logger setup
+logger = getLogger(__name__)
+logger = set_logger(logger)
+
+def add_message(connection, uchenik_id: int, answer_text: str, timestamp: float, dur: float, temp:float) -> None:
     """
-    Добавляет сообщение в таблицу gpt в SQLite базу данных.
+    Добавляет сообщение в таблицу gpt в PostgreSQL базу данных.
     
     Args:
-        db_path (str): Путь к SQLite базе данных.
-        uchenik_id (Any): ID ученика.
+        connection (obj): Объект соединения с PostgreSQL базой данных.
+        uchenik_id (int): ID ученика.
         answer_text (str): Текст ответа.
         timestamp (float): Временная метка.
+        dur (float): Продолжительность.
+        temp (float): Температура.
         
     Returns:
         None
@@ -17,38 +26,23 @@ def add_message(conn: Connection, uchenik_id: int, answer_text: str, timestamp: 
     
     try:
         # Создать курсор для выполнения SQL запросов
-        cursor = conn.cursor()
+        cursor = connection.cursor()
         
         # SQL запрос для добавления записи
         add_message_query = """
         INSERT INTO gpt (id, answer, timestamp, duration, temperature)
-        VALUES (?, ?, ?, ?, ?);
+        VALUES (%s, %s, %s, %s, %s);
         """
         
         # Выполнить SQL запрос
         cursor.execute(add_message_query, (uchenik_id, answer_text, timestamp, dur, temp))
-        
+        logger.info('Сообщение добавлено в базу данных')
         # Зафиксировать изменения
-        conn.commit()
+        connection.commit()
         
-    except Error as e:
-        print(f"Ошибка при работе с базой данных: {e}")
-        
+    except Exception as e:
+        logger.error("Ошибка при выполнении запроса: %s", e)
+        connection.rollback()
+        return False
     finally:
-        # Закрыть соединение с базой данных
-        pass
-
-
-
-if __name__ == "__main__":
-    # Пример использования
-    #db_path = "your_database.db"
-    uchenik_id = 1
-    answer_text = "Привет, это GPT-4."
-    timestamp = 1632234523.0
-    dur = 0.0
-    temp = 0.0
-    from os.path import join
-    db_path = join('files', 'repetitors.db')
-    #sql = login_to_sql_server(db_path)
-    #add_message(sql, uchenik_id, answer_text, timestamp, dur, temp)
+        cursor.close()

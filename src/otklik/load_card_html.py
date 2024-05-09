@@ -6,6 +6,8 @@ from re import sub
 from otklik.filling_the_card import filling_the_card
 from text_process.podhodit import podhodit
 from otklik.click import click
+from os import makedirs
+from os.path import exists
 
 from time import sleep
 from log_scripts.set_logger import set_logger
@@ -25,6 +27,7 @@ import time
 from dialog.testing_send_message import testing_send_message
 
 from database.add_message import add_message
+from utils.web_hook import WebhookSender
 
 logger = getLogger(__name__)
 logger = set_logger(logger)
@@ -55,7 +58,12 @@ def load_card_html(url, driver, sql) -> tuple:
     html_otklik_param = ""
     all_text = ""
     id = get_id_from_url(url)
-    
+    if exists(f"log_texts/{id}.txt"):
+        if not exists("log_texts"):
+            makedirs("log_texts")
+        with open(f"log_texts/errors.txt", "a") as f:
+            f.write(f"{id}\n")
+        return "Error", html, html_choose, html_otklik_param, all_text, ban, limit
     if not get_page(driver, url):
         return "Error", html, html_choose, html_otklik_param, all_text, ban, limit
     #html = driver.page_source
@@ -109,7 +117,7 @@ def load_card_html(url, driver, sql) -> tuple:
             return "Deleted", html, html_choose, html_otklik_param, all_text_to_gpt_with_numbers,   ban, limit
      
 
-    sleep(2 )
+    sleep(2 + random())
     #versiya dlya mobilnogo
     otklik = w1.is_it_on_the_page("otklik_chouse_button") #  кнопка выбора отклика"fdEiIF", "css"],chpKsZ
     if not otklik:
@@ -117,7 +125,7 @@ def load_card_html(url, driver, sql) -> tuple:
         return "Error", html, html_choose, html_otklik_param, all_text_to_gpt_with_numbers, ban, limit
 
     #pik()    
-    sleep(1)
+    sleep(1 + random())
     if not click(otklik, driver, 1):
         logger.info("Не получилось нажать на кнопку откликнуться mibile %s", id)
         html = driver.page_source
@@ -187,7 +195,8 @@ def load_card_html(url, driver, sql) -> tuple:
     html_choose = w3.is_it_on_the_page("otklik_params")
     if html_choose:
         html_choose = html_choose.get_attribute('outerHTML')
-    if not filling_the_card(driver, id, all_text_to_gpt, w3, all_text_to_gpt_with_numbers, sql):
+    card_filled, privetstvie, midle_text, distant_advertasing, proshanie = filling_the_card(driver, id, all_text, w3, all_text_to_gpt_with_numbers, sql)
+    if not card_filled:
         logger.error("Не получилось заполнить карточку %s", id)
         return "Error", html, html_choose, html_otklik_param, all_text_to_gpt_with_numbers, ban, limit
     
@@ -197,13 +206,13 @@ def load_card_html(url, driver, sql) -> tuple:
     w6 = WebScraper(driver, "dict_otklik")
     button_otklik = w6.is_it_on_the_page("final_butom1")
     if not button_otklik:
-        logger.info("Нет кнопки1 отправить отклик %s", id)
+        logger.error("Нет кнопки1 отправить отклик %s", id)
         button_otklik = w6.is_it_on_the_page("final_butom2")
         if not button_otklik:
-            logger.info("Нет кнопки2 отправить отклик %s", id)
+            logger.error("Нет кнопки2 отправить отклик %s", id)
             return "Error", html, html_choose, html_otklik_param, all_text_to_gpt_with_numbers, ban, limit
     driver.execute_script("arguments[0].focus();", button_otklik)
-    sleep(0.1)
+    sleep(0.2 + random())
     #button_otklik.send_keys(Keys.RETURN)
     #actions.move_to_element(button_otklik).perform() # error ButtonStyles__Label-sc-1nuwmcp-4 kurYnT
     if type(button_otklik) == WebElement:
@@ -211,36 +220,55 @@ def load_card_html(url, driver, sql) -> tuple:
     else:
         logger.info("Нет кнопки3 отправить отклик %s", id)
         return "Error", html, html_choose, html_otklik_param, all_text_to_gpt_with_numbers, ban, limit
-    logger.info("Отклик отправлен на карточке %s", id)
-    sleep(5+ randint(-2, 2))
+    logger.info("Отклик отправлен на карточке 1 %s", id)
+    sleep(10+ randint(-2, 2))
     test_url = driver.current_url
     if not test_url.startswith(url2):
-        logger.info("Отклик отправлен на карточке %s", id)
+        logger.info("Отклик отправлен на карточке 2 %s", id)
         w10 = WebScraper(driver, "dict_otklik")
         if w10.is_it_on_the_page("chat_page"):
             logger.info("Открылся чат по заказу %s, пробуем отправить доп инфо", id)
-            sleep(2)
-            to_send = randint(0, 2)
-            if to_send == 0:
-                logger.info("Не отправляем доп инфо %s", id)
-            elif to_send in [1, 2]:
-                message = messages[to_send]
-                logger.info("По заказу %s Отправляем доп инфо %s", id, message)
-                if not testing_send_message(driver, message):
-                    logger.info("Не получилось отправить доп инфо %s", id)
-                else:
-                    start_time = time.time()
-                    answers_dir = 'answers'
-                    if not exists(answers_dir):
-                        makedirs(answers_dir)
-                    with open(f'{answers_dir}/dop_info_{id}_{start_time}.txt', 'w') as f:
-                        f.write(message)
-                    add_message(sql, id, message, start_time, None, None)
+            sleep(2 + random())
+            # to_send = randint(0, 2)
+            # if to_send == 0:
+            #     logger.info("Не отправляем доп инфо %s", id)
+            # elif to_send in [1, 2]:
+            message = f"""
+{privetstvie}
+
+{midle_text}
+
+{distant_advertasing}
+
+{proshanie}
+
+В отличие от большенства преподавателей, я продолжаю преподавать на протяжении всего лета, обеспечивая вам уникальную возможность для углубления знаний без перерыва в обучении.
+            """
+            #messages[to_send]
+            logger.info("По заказу %s Отправляем доп инфо %s", id, message)
+            if not testing_send_message(driver, message):
+                logger.error("Не получилось отправить доп инфо %s", id)
             else:
-                logger.error("Ошибка")
+                start_time = time.time()
+                # answers_dir = 'answers'
+                # if not exists(answers_dir):
+                #     makedirs(answers_dir)
+                # with open(f'{answers_dir}/dop_info_{id}_{start_time}.txt', 'w') as f:
+                #     f.write(message)
+                add_message(sql, id, message, start_time, None, None)
+            # else:
+            #     logger.error("Ошибка")
+        sender = WebhookSender()
+        data = {
+            'service': 'otklik',
+            'event': 'New Otklik',
+            'error': False,
+            'message': f'Отклик отправлен на карточке 3 {id}'
+        }
+        sender.send_webhook(data)
         return "Sent", html, html_choose, html_otklik_param, all_text_to_gpt_with_numbers, ban, limit
     html = driver.page_source
-    logger.error("Отклик не отправлен на карточке %s", id)
+    logger.error(f"Отклик не отправлен на карточке {id} {test_url}", id)
     return "Error", html, html_choose, html_otklik_param, all_text_to_gpt_with_numbers, ban, limit
     
 

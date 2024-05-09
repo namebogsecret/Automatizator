@@ -26,5 +26,5 @@ def podhodit(all_text: str) -> bool:
         logger.info("%s Нет мат олимпиад для старших классов, кроме олимпиад по физике, курсов, дви кроме дви по физике для 10 и младше", id)
         return True
     else:
-        logger.info("%s не подходит", id)
+        logger.info(f"%s не подходит")
         return False

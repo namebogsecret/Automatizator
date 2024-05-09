@@ -26,20 +26,34 @@ class CardUpdater:
             cards_parsed = []
             logger.info('Number of cards: %s', len(cards))
             for i in range(0, len(cards)):
+
                 card = CardProcessor3(cards[i])
                 card = card.process_3()
                 if card is not None:
+                    logger.info("1")
                     if card['url'] is None:
                         continue
+                    logger.info("2")
+                    try:
+                        card['id'] = int(card['id'])
+                        logger.info("3")
+                    except (ValueError, TypeError):
+                        logger.error("Некорректное значение id карточки: %s", card['id'])
+                        continue
+                    logger.info("4")
                     cards_parsed.append(card)
+                    logger.info("5")
                     logger.debug("Карточка (%s) %s не нулевая", i, card['id'])
                     if compare_to_database(card, self.sql) == False:
+                            logger.info("7")
                             add_card_to_sql(self.sql, card)
                             logger.info("Карточка (%s) %s добавлена в базу данных", i, card['id'])
                     elif was_not_modified(card, self.sql) == True and card['modified'] is not None:
+                            logger.info("8")
                             update_card_in_sql(self.sql, card)
                             logger.info("Карточка (%s) %s обновлена в базе данных", i, card['id'])
                     else:
+                            logger.info("9")
                             logger.info("Карточка (%s) %s уже есть в базе данных и не изменена", i, card['id'])
                 else:
                     logger.info("Карточка (%s) нулевая", i)

@@ -13,5 +13,5 @@ def capcha_got_new_elements(elements):
             _ = element.get_attribute('tag_name')
         except Exception as e:
             not_got += 1
-            loger.info(f"Элемент с индексом {i} был изменен или удален. {e}")
+            logger.info(f"Элемент был изменен или удален. {e}")
     return not_got > 0
