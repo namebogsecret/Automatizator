@@ -237,8 +237,12 @@ def load_card_html(url, driver, sql) -> tuple:
 {privetstvie}
 
 {midle_text}
+
 {distant_advertasing}
+
 {proshanie}
+
+В отличие от большенства преподавателей, я продолжаю преподавать на протяжении всего лета, обеспечивая вам уникальную возможность для углубления знаний без перерыва в обучении.
             """
             #messages[to_send]
             logger.info("По заказу %s Отправляем доп инфо %s", id, message)
